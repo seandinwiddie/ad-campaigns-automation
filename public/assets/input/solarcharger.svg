@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080" fill="none">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1080" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E0F2FE" />
+      <stop offset="1" stop-color="#93C5FD" />
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#sky)" />
+  <rect x="260" y="290" width="560" height="500" rx="28" fill="#0F172A" />
+  <g stroke="#38BDF8" stroke-width="8" opacity="0.7">
+    <line x1="300" y1="350" x2="780" y2="350" />
+    <line x1="300" y1="430" x2="780" y2="430" />
+    <line x1="300" y1="510" x2="780" y2="510" />
+    <line x1="300" y1="590" x2="780" y2="590" />
+    <line x1="300" y1="670" x2="780" y2="670" />
+    <line x1="360" y1="320" x2="360" y2="760" />
+    <line x1="450" y1="320" x2="450" y2="760" />
+    <line x1="540" y1="320" x2="540" y2="760" />
+    <line x1="630" y1="320" x2="630" y2="760" />
+    <line x1="720" y1="320" x2="720" y2="760" />
+  </g>
+  <circle cx="860" cy="230" r="68" fill="#FACC15" />
+  <text x="540" y="890" font-family="Arial, Helvetica, sans-serif" font-size="64" fill="#0F172A" text-anchor="middle" font-weight="700">SolarCharger</text>
+</svg>

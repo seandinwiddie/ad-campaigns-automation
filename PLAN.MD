@@ -1,5 +1,10 @@
 # Creative Automation Pipeline
 
+## Hard Constraints
+
+- Keep all business logic in pure reducers in `*Slice.ts` files.
+- Non-slice files are wiring/helpers only and must not contain business rules.
+
 ## Summary
 
 A production-grade MVP for automating creative asset generation across social media campaigns. Accepts structured campaign briefs, resolves or generates hero images via GenAI, produces format-specific creatives (1:1, 9:16, 16:9) with text overlays and brand compliance checks, and organizes outputs for immediate deployment.
@@ -21,7 +26,7 @@ Built for global consumer goods teams launching hundreds of localized campaigns 
 | 4 | Produce creatives in **≥3 aspect ratios** (1:1, 9:16, 16:9) | Social formats |
 | 5 | Display **campaign message** on final posts (English min; localized = plus) | Text overlay |
 | 6 | Run **locally** (CLI or simple local app) | Local execution |
-| 7 | Save outputs organized by **product × aspect ratio** | Output structure |
+| 7 | Save outputs organized by **product × aspect ratio** | Structured Dropbox path `/output/<product>/<ratio>/creative.png` |
 | 8 | **README** with: how to run, example I/O, design decisions, assumptions/limitations | Documentation |
 | 9 | Brand compliance checks (logo presence, brand colors) | Quality assurance |
 | 10 | Legal content checks (prohibited word flagging) | Risk mitigation |
@@ -41,10 +46,11 @@ Built for global consumer goods teams launching hundreds of localized campaigns 
 
 | Layer | Choice | Rationale |
 |-------|--------|-----------|
-| **Framework** | Next.js (App Router) | Modern React framework; JD calls out Node.js + full-stack; supports both web UI and API routes |
+| **Framework** | Next.js (App Router) | Modern React framework for local web UI (single-page App Router entry) |
 | **Language** | TypeScript | Type safety, FP-aligned, JD requirement |
 | **State Management** | Redux Toolkit (RTK) + RTK Query | FP maintenance strategy standard; all business logic in pure reducers |
 | **GenAI API** | Gemini Nano Banana | User-specified; API key entered via UI on first use (not hardcoded) |
+| **Storage** | Dropbox Files API via RTK Query | Cloud output persistence with deterministic folder paths |
 | **Image Processing** | node-canvas | Text overlay, compositing; may be swapped later |
 | **Image Resize/Crop** | Sharp | Fast aspect ratio resizing |
 | **Brief Parsing** | `js-yaml` + JSON | Support both formats |
@@ -80,9 +86,11 @@ Built for global consumer goods teams launching hundreds of localized campaigns 
 > **Implementation Scope**: Follow the FP and presentational component patterns from the maintenance doc. **EXCLUSIONS**: Do NOT implement any Database, Expo, or Backend patterns — out of scope for this MVP.
 
 - **Components are presentational ONLY** — zero business logic in React components
-- **ALL state in Redux** — no `useState`, `useEffect`, `useCallback` for logic
+- **ALL state in Redux** — no `useState`, `useEffect`, `useCallback`, `useRouter`, `useRef` in `.tsx` files. Only `useAppSelector` and `useAppDispatch`.
+- **All form state in Redux** — `uiSlice` holds `apiKeyInput`, `briefRawText`, `elapsedSeconds`
+- **SPA routing via Redux** — `uiSlice.currentPage` drives screen rendering, not Next.js router
 - **Business logic in pure reducers** — validation, transformations, workflows
-- **RTK Query for data fetching** — API calls to GenAI, asset resolution
+- **RTK Query for data fetching** — API calls to GenAI, asset resolution, Dropbox uploads
 - **Fat reducers, thin actions** — all logic centralized in reducers for time-travel debugging
 - **Feature-based directory structure** — domain-driven organization
 - **BDD testing** — Given-When-Then user stories written first, no mocking internal code
@@ -92,9 +100,17 @@ Built for global consumer goods teams launching hundreds of localized campaigns 
 
 ### Component Composition Hierarchy
 
-1. **Screens** (`screens/`) — compositions of elements only, NO raw markup
-2. **Unique Elements** (`elements/unique/`) — feature-specific, composed of generic elements
+1. **Screens** (`screens/`) — compositions of generic + unique elements only, NO raw markup
+2. **Unique Elements** (`elements/unique/`) — feature-specific, composed of generic elements only
 3. **Generic Elements** (`elements/generic/`) — design system atoms/molecules sourced **exclusively** from **shadcn/ui** or **VengeanceUI** (no custom primitives)
+
+### SPA Architecture
+
+- **Single `page.tsx`** — Next.js requires one page file for routing; it renders only a screen router
+- **Screen routing via Redux** — `uiSlice.currentPage` determines which screen is rendered (settings | home | pipeline | results)
+- **Zero React hooks for logic** — no `useState`, `useEffect`, `useRouter`, `useCallback`, `useRef` in any `.tsx` file. Only `useAppSelector` and `useAppDispatch`.
+- **All form state in Redux** — `uiSlice` holds `apiKeyInput`, `briefRawText`, `elapsedSeconds`
+- **Navigation via dispatch** — `dispatch(setCurrentPage('home'))` instead of `router.push('/home')`
 
 ### UI Library Setup Instructions
 
@@ -115,10 +131,10 @@ pnpm dlx shadcn@latest add tabs
 pnpm dlx shadcn@latest add dialog
 ```
 
-Components are copied to `src/components/ui/` and are fully customizable.
+Components should live in `src/components/elements/generic/` and be fully customizable.
 
 ```tsx
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/elements/generic/Button"
 ```
 
 #### VengeanceUI Setup ([docs](https://www.vengenceui.com/docs/installation))
@@ -147,7 +163,7 @@ Add Tailwind import to `src/app/globals.css`:
 npm install framer-motion clsx tailwind-merge lucide-react
 ```
 
-Create `src/lib/utils.ts` (shared `cn` helper):
+Create `src/common/cn.ts` (shared `cn` helper):
 ```ts
 import { ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -178,125 +194,190 @@ To optimize integration performance and latency, the pipeline state machine (`pi
 ### Refactoring Checklist
 
 Apply before merging any PR:
-- [ ] No business logic in components
-- [ ] All state in Redux (no `useState`, `useReducer`)
-- [ ] All data fetching uses RTK Query
-- [ ] Selectors co-located with reducers
-- [ ] Files < 300 lines, preferably **one function per file**
-- [ ] BDD tests exist for all reducers
-- [ ] No `useEffect` for logic
+- No business logic in components (presentational ONLY)
+- All state in Redux (no `useState`, `useReducer`, `useEffect`, `useRouter`, `useRef`, `useCallback`)
+- Only `useAppSelector` and `useAppDispatch` in `.tsx` files
+- All form state in Redux (uiSlice)
+- SPA routing via `uiSlice.currentPage`
+- All data fetching uses RTK Query
+- Selectors in separate `*Selectors.ts` files; thunks in separate `*Thunks.ts` files, actions in separate `*Actions.ts` files
+- Files < 300 lines, preferably **one function per file**; separated but domain and subdomain.
+- BDD tests exist for all reducers
+- Screens = generic + unique elements only
+- Unique elements = generic elements only
+- Generic elements = shadcn/ui or VengeanceUI only
 
 ### API Key Handling
 
 > [!IMPORTANT]
-> **No hardcoded API keys.** On first launch, the UI presents a settings/onboarding screen where the reviewer enters their Gemini Nano Banana API key. The key is stored in Redux state (persisted to localStorage via a listener middleware), never committed to source.
+> **No hardcoded credentials.** On first launch, the UI presents a settings/onboarding screen where the reviewer enters both Gemini Nano Banana API key and Dropbox access token. Both are stored in Redux state (persisted to localStorage via listener middleware), never committed to source.
 
 ### Directory Structure
 
 ```
-creative-automation-for-scalable-social-ad-campaigns/
+ad-campaigns-automation/
 ├── Dockerfile
 ├── docker-compose.yml
 ├── README.md
+├── PLAN.MD
+├── TODO.md
 ├── package.json
 ├── tsconfig.json
 ├── next.config.ts
-├── .env.example                          # Documents required env vars (no values)
+├── next-env.d.ts
+├── jest.config.ts
+├── jest.setup.ts
+├── playwright.config.ts
+├── postcss.config.mjs
+├── .env.example                                # Documents required env vars (no values)
 │
 ├── src/
-│   ├── app/                              # Next.js App Router
-│   │   ├── layout.tsx                    # Root layout with Redux Provider
-│   │   ├── page.tsx                      # Landing / campaign brief entry
-│   │   ├── settings/
-│   │   │   └── page.tsx                  # API key configuration
-│   │   ├── pipeline/
-│   │   │   └── page.tsx                  # Pipeline execution & progress
-│   │   └── results/
-│   │       └── page.tsx                  # Output gallery / download
+│   ├── app/                                    # Next.js App Router shell (no domain logic)
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   ├── globals.css
+│   │   ├── rootReducer.ts
+│   │   ├── store.ts
+│   │   ├── hooks.ts
+│   │   └── persistenceMiddleware.ts
 │   │
-│   ├── features/                         # Redux feature modules (domain-driven)
+│   ├── common/cn.ts
+│   │
+│   ├── features/                               # All application logic lives in pure reducers in slice files
 │   │   ├── core/
-│   │   │   ├── api/
-│   │   │   │   └── slice/
-│   │   │   │       └── apiSlice.ts       # RTK Query base API slice
-│   │   │   ├── store/
-│   │   │   │   ├── store.ts              # configureStore setup
-│   │   │   │   └── middleware/           # Custom middleware (persistence, logging)
-│   │   │   ├── ui/
-│   │   │   │   └── slice/
-│   │   │   │       └── uiSlice.ts        # UI state (modals, nav, loading)
-│   │   │   └── settings/
-│   │   │       └── slice/
-│   │   │           └── settingsSlice.ts  # API key storage, config
+│   │   │   ├── types/coreDomainType.ts
+│   │   │   ├── api/slice/apiSlice.ts
+│   │   │   ├── settings/
+│   │   │   │   ├── types/settingsStateType.ts
+│   │   │   │   ├── slice/settingsSlice.ts
+│   │   │   │   ├── slice/settingsActions.ts
+│   │   │   │   ├── slice/settingsSelectors.ts
+│   │   │   │   └── __tests__/settingsSlice.test.ts
+│   │   │   └── ui/
+│   │   │       ├── types/appPageType.ts
+│   │   │       ├── types/uiStateType.ts
+│   │   │       ├── slice/uiSlice.ts
+│   │   │       ├── slice/uiActions.ts
+│   │   │       ├── slice/uiSelectors.ts
+│   │   │       └── __tests__/uiSlice.test.ts
 │   │   │
-│   │   ├── brief/                        # Campaign brief domain
+│   │   ├── brief/
+│   │   │   ├── thunks/briefThunks.ts
 │   │   │   ├── slice/
-│   │   │   │   └── briefSlice.ts         # Brief parsing, validation (pure reducers)
+│   │   │   │   ├── briefSlice.ts
+│   │   │   │   ├── briefActions.ts
+│   │   │   │   └── briefSelectors.ts
 │   │   │   ├── types/
-│   │   │   │   └── brief.ts              # CampaignBrief, Product types
-│   │   │   └── __tests__/
-│   │   │       └── briefSlice.test.ts
+│   │   │   │   ├── campaignBriefType.ts
+│   │   │   │   ├── productType.ts
+│   │   │   │   ├── brandGuidelinesType.ts
+│   │   │   │   ├── validationErrorType.ts
+│   │   │   │   └── briefStateType.ts
+│   │   │   └── __tests__/briefSlice.test.ts
 │   │   │
-│   │   ├── assets/                       # Asset resolution & generation domain
+│   │   ├── assets/
 │   │   │   ├── slice/
-│   │   │   │   └── assetsSlice.ts        # Asset resolution logic (pure reducers)
-│   │   │   ├── api/
-│   │   │   │   └── generationApi.ts      # RTK Query: Gemini Nano Banana calls
+│   │   │   │   ├── assetsSlice.ts
+│   │   │   │   ├── assetsActions.ts
+│   │   │   │   └── assetsSelectors.ts
+│   │   │   ├── api/generationApi.ts
 │   │   │   ├── types/
-│   │   │   └── __tests__/
+│   │   │   │   ├── assetStatusType.ts
+│   │   │   │   ├── assetType.ts
+│   │   │   │   ├── assetsStateType.ts
+│   │   │   │   ├── productAssetStatusType.ts
+│   │   │   │   └── productAssetType.ts
+│   │   │   └── __tests__/assetsSlice.test.ts
 │   │   │
-│   │   ├── creative/                     # Creative composition domain
+│   │   ├── creative/
+│   │   │   ├── constants/formatAspectRatios.ts
+│   │   │   ├── thunks/
+│   │   │   │   ├── resizeImageThunk.ts
+│   │   │   │   └── composeCreativeThunk.ts
 │   │   │   ├── slice/
-│   │   │   │   └── creativeSlice.ts      # Format logic, composition state
+│   │   │   │   ├── creativeSlice.ts
+│   │   │   │   ├── creativeActions.ts
+│   │   │   │   ├── creativeSelectors.ts
 │   │   │   ├── types/
-│   │   │   │   └── formats.ts            # Aspect ratio definitions
-│   │   │   └── __tests__/
+│   │   │   │   ├── creativeAspectRatioType.ts
+│   │   │   │   ├── creativeStatusType.ts
+│   │   │   │   ├── creativeMetadataType.ts
+│   │   │   │   ├── creativeType.ts
+│   │   │   │   ├── creativeStateType.ts
+│   │   │   │   ├── formatAspectRatioType.ts
+│   │   │   │   ├── formatCreativeStatusType.ts
+│   │   │   │   ├── creativeOutputType.ts
+│   │   │   │   └── composeOptionsType.ts
+│   │   │   └── __tests__/creativeSlice.test.ts
 │   │   │
-│   │   ├── compliance/                   # Brand & legal checks (bonus)
+│   │   ├── compliance/
+│   │   │   ├── types/
+│   │   │   │   ├── complianceIssueType.ts
+│   │   │   │   ├── complianceReportType.ts
+│   │   │   │   └── complianceStateType.ts
 │   │   │   ├── slice/
-│   │   │   │   └── complianceSlice.ts    # Compliance rules (pure reducers)
-│   │   │   └── __tests__/
+│   │   │   │   ├── complianceSlice.ts
+│   │   │   │   ├── complianceActions.ts
+│   │   │   │   └── complianceSelectors.ts
+│   │   │   └── __tests__/complianceSlice.test.ts
 │   │   │
-│   │   └── pipeline/                     # Pipeline orchestration
+│   │   └── pipeline/
+│   │       ├── types/
+│   │       │   ├── pipelineStatusType.ts
+│   │       │   ├── productStatusType.ts
+│   │       │   ├── productProgressType.ts
+│   │       │   ├── pipelineMetricsType.ts
+│   │       │   ├── pipelineErrorType.ts
+│   │       │   └── pipelineStateType.ts
 │   │       ├── slice/
-│   │       │   └── pipelineSlice.ts      # Pipeline state machine (pure reducers)
-│   │       ├── listeners/
-│   │       │   └── pipelineListener.ts   # Orchestration side effects
-│   │       └── __tests__/
+│   │       │   ├── pipelineSlice.ts
+│   │       │   ├── pipelineActions.ts
+│   │       │   └── pipelineSelectors.ts
+│   │       ├── listeners/pipelineListener.ts
+│   │       └── __tests__/pipelineSlice.test.ts
 │   │
-│   ├── components/                       # Presentational ONLY
-│   │   ├── elements/
-│   │   │   ├── generic/                  # Design system primitives (shadcn/ui)
-│   │   │   │   ├── forms/               # BriefForm, APIKeyInput
-│   │   │   │   ├── layout/             # AppShell, Sidebar, Grid
-│   │   │   │   └── ui/                 # Button, Card, Input, Progress
-│   │   │   └── unique/                  # Feature-specific components
-│   │   │       ├── BriefEditor.tsx      # Campaign brief entry UI
-│   │   │       ├── PipelineProgress.tsx # Execution progress display
-│   │   │       ├── OutputGallery.tsx    # Generated creatives gallery
-│   │   │       └── ComplianceReport.tsx # Compliance check results
-│   │   └── screens/                     # Screen compositions
-│   │
-│   └── lib/                             # Pure utility functions
-│       ├── canvas/
-│       │   └── composer.ts              # node-canvas: text overlay, compositing
-│       ├── image/
-│       │   └── resizer.ts              # Sharp: aspect ratio resize/crop
-│       └── brief/
-│           └── parser.ts               # JSON/YAML brief parsing (pure function)
+│   └── components/                             # Presentational-only components
+│       ├── elements/
+│       │   ├── generic/
+│       │   │   ├── Alert.tsx
+│       │   │   ├── Badge.tsx
+│       │   │   ├── Button.tsx
+│       │   │   ├── Card.tsx
+│       │   │   ├── Heading.tsx
+│       │   │   ├── ImageCard.tsx
+│       │   │   ├── Input.tsx
+│       │   │   ├── Label.tsx
+│       │   │   ├── Progress.tsx
+│       │   │   ├── StatusList.tsx
+│       │   │   ├── Table.tsx
+│       │   │   ├── Text.tsx
+│       │   │   └── Textarea.tsx
+│       │   └── unique/
+│       │       ├── BriefEditor.tsx
+│       │       ├── PipelineProgress.tsx
+│       │       ├── OutputGallery.tsx
+│       │       └── ComplianceReport.tsx
+│       └── screens/
+│           ├── StoreProvider.tsx
+│           ├── ScreenRouter.tsx
+│           ├── SettingsScreen.tsx
+│           ├── HomeScreen.tsx
+│           ├── PipelineScreen.tsx
+│           └── ResultsScreen.tsx
 │
 ├── public/
-│   └── assets/
-│       └── input/                       # Pre-existing brand assets for demo
+│   ├── assets/input/
+│   │   ├── ecobottle.svg
+│   │   └── solarcharger.svg
+│   └── briefs/example-brief.json
 │
 ├── briefs/
-│   └── example-brief.json              # Example campaign brief
+│   ├── example-brief.json
+│   └── example-brief.yaml
 │
-├── output/                              # Generated outputs (gitignored)
-│
-├── stories/                             # Storybook stories
-│
-└── __tests__/                           # E2E / integration tests
+├── output/                                     # Generated outputs (gitignored)
+├── stories/                                    # Storybook stories
+└── __tests__/
     └── pipeline.e2e.test.ts
 ```
 
@@ -312,10 +393,10 @@ flowchart TD
     E -- No --> G[Generate via Gemini Nano Banana - RTK Query]
     F --> H[For each aspect ratio: 1:1 / 9:16 / 16:9]
     G --> H
-    H --> I[Sharp: Resize/Crop to format]
-    I --> J[node-canvas: Overlay campaign message text]
-    J --> K[Run compliance checks - bonus]
-    K --> L[Save to output/product/ratio/]
+    H --> I[Compose creative variants]
+    I --> J[Run compliance checks - bonus]
+    J --> K[Upload via RTK Query to Dropbox Files API]
+    K --> L[Persist to /output/product/ratio/creative.png]
     L --> M[Update pipelineSlice state]
     M --> D
     D -- Done --> N[Display results in OutputGallery]
@@ -585,10 +666,10 @@ npm run storybook       # Full component coverage
 ```bash
 docker-compose up       # Start app
 # Open http://localhost:3000
-# 1. Enter Gemini Nano Banana API key in settings
+# 1. Enter Gemini Nano Banana API key and Dropbox access token in settings
 # 2. Load example brief
 # 3. Run pipeline
-# 4. Verify outputs in output/<product>/<ratio>/
+# 4. Verify outputs in Dropbox path /output/<product>/<ratio>/creative.png
 ```
 
 ### Demo Recording
