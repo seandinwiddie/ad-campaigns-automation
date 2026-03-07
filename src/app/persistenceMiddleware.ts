@@ -1,37 +1,37 @@
 import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
 import type { RootState } from '@/app/store';
 import {
-  setApiKey,
-  clearApiKey,
+  setLeonardoApiKey,
+  clearLeonardoApiKey,
   setDropboxAccessToken,
   clearDropboxAccessToken,
 } from '@/features/core/settings/slice/settingsActions';
 import {
   setCurrentPage,
-  setApiKeyInput,
+  setLeonardoApiKeyInput,
   setDropboxAccessTokenInput,
   incrementElapsed,
   resetElapsed,
 } from '@/features/core/ui/slice/uiActions';
 import { startPipeline, pipelineComplete, resetPipeline } from '@/features/pipeline/slice/pipelineActions';
 
-const API_KEY_STORAGE_KEY = 'ad-campaigns-api-key';
+const LEONARDO_API_KEY_STORAGE_KEY = 'ad-campaigns-leonardo-api-key';
 const DROPBOX_TOKEN_STORAGE_KEY = 'ad-campaigns-dropbox-token';
 
 export const persistenceMiddleware = createListenerMiddleware();
 
 // Persist API key to localStorage when it changes
 persistenceMiddleware.startListening({
-  matcher: isAnyOf(setApiKey, clearApiKey, setDropboxAccessToken, clearDropboxAccessToken),
+  matcher: isAnyOf(setLeonardoApiKey, clearLeonardoApiKey, setDropboxAccessToken, clearDropboxAccessToken),
   effect: (_action, listenerApi) => {
     const state = listenerApi.getState() as RootState;
-    const apiKey = state.settings.apiKey;
+    const leonardoApiKey = state.settings.leonardoApiKey;
     const dropboxAccessToken = state.settings.dropboxAccessToken;
     try {
-      if (apiKey) {
-        localStorage.setItem(API_KEY_STORAGE_KEY, apiKey);
+      if (leonardoApiKey) {
+        localStorage.setItem(LEONARDO_API_KEY_STORAGE_KEY, leonardoApiKey);
       } else {
-        localStorage.removeItem(API_KEY_STORAGE_KEY);
+        localStorage.removeItem(LEONARDO_API_KEY_STORAGE_KEY);
       }
 
       if (dropboxAccessToken) {
@@ -42,14 +42,6 @@ persistenceMiddleware.startListening({
     } catch {
       // localStorage not available (SSR)
     }
-  },
-});
-
-// Navigate to home after saving API key
-persistenceMiddleware.startListening({
-  actionCreator: setApiKey,
-  effect: (_action, listenerApi) => {
-    listenerApi.dispatch(setCurrentPage('home'));
   },
 });
 
@@ -93,17 +85,17 @@ persistenceMiddleware.startListening({
 // Load API key from localStorage on app init
 export const initializeStore = (dispatch: (action: unknown) => void) => {
   try {
-    const persistedApiKey = localStorage.getItem(API_KEY_STORAGE_KEY);
+    const persistedLeonardoApiKey = localStorage.getItem(LEONARDO_API_KEY_STORAGE_KEY);
     const persistedDropboxToken = localStorage.getItem(DROPBOX_TOKEN_STORAGE_KEY);
-    if (persistedApiKey) {
-      dispatch(setApiKey(persistedApiKey));
-      dispatch(setApiKeyInput(persistedApiKey));
+    if (persistedLeonardoApiKey) {
+      dispatch(setLeonardoApiKey(persistedLeonardoApiKey));
+      dispatch(setLeonardoApiKeyInput(persistedLeonardoApiKey));
     }
     if (persistedDropboxToken) {
       dispatch(setDropboxAccessToken(persistedDropboxToken));
       dispatch(setDropboxAccessTokenInput(persistedDropboxToken));
     }
-    if (persistedApiKey || persistedDropboxToken) {
+    if (persistedLeonardoApiKey && persistedDropboxToken) {
       dispatch(setCurrentPage('home'));
     }
   } catch {

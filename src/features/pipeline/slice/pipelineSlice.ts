@@ -12,9 +12,6 @@ const initialState: PipelineState = {
   error: null,
   errors: [],
   currentProduct: null,
-  originalCampaignMessage: '',
-  localizedCampaignMessage: '',
-  targetLanguage: null,
   progressPct: 0,
   failedProducts: [],
   productStatuses: {},
@@ -74,24 +71,6 @@ export const pipelineSlice = createSlice({
     },
     setPipelineStatus(state, action: PayloadAction<PipelineStatus>) {
       state.status = action.payload;
-    },
-    prepareLocalization(state, action: PayloadAction<{ targetRegion: string; campaignMessage: string }>) {
-      const region = action.payload.targetRegion.toLowerCase();
-      let targetLanguage: string | null = null;
-      if (region.includes('mexico') || region.includes('spanish') || region.includes('es-')) {
-        targetLanguage = 'Spanish';
-      } else if (region.includes('germany') || region.includes('german') || region.includes('de-')) {
-        targetLanguage = 'German';
-      } else if (region.includes('france') || region.includes('french') || region.includes('fr-')) {
-        targetLanguage = 'French';
-      }
-
-      state.originalCampaignMessage = action.payload.campaignMessage;
-      state.localizedCampaignMessage = action.payload.campaignMessage;
-      state.targetLanguage = targetLanguage;
-    },
-    setLocalizedCampaignMessage(state, action: PayloadAction<string>) {
-      state.localizedCampaignMessage = action.payload;
     },
     productCompleted(state, action: PayloadAction<{ productId: string }>) {
       const { productId } = action.payload;

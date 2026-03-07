@@ -28,7 +28,7 @@ const initialState: UiState = {
   activeModal: null,
   currentPage: 'settings',
   briefRawText: '',
-  apiKeyInput: '',
+  leonardoApiKeyInput: '',
   dropboxAccessTokenInput: '',
   elapsedSeconds: 0,
 };
@@ -52,8 +52,8 @@ export const uiSlice = createSlice({
     loadExampleBriefText: (state) => {
       state.briefRawText = EXAMPLE_BRIEF_TEMPLATE;
     },
-    setApiKeyInput: (state, action: PayloadAction<string>) => {
-      state.apiKeyInput = action.payload;
+    setLeonardoApiKeyInput: (state, action: PayloadAction<string>) => {
+      state.leonardoApiKeyInput = action.payload;
     },
     setDropboxAccessTokenInput: (state, action: PayloadAction<string>) => {
       state.dropboxAccessTokenInput = action.payload;

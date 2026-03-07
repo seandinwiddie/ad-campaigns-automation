@@ -1,4 +1,4 @@
 export interface SettingsState {
-  apiKey: string | null;
+  leonardoApiKey: string | null;
   dropboxAccessToken: string | null;
 }

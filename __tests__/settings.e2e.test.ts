@@ -6,48 +6,44 @@ test.describe('Settings API Configurations', () => {
         await expect(page.getByText('System Credentials')).toBeVisible();
     });
 
-    test('Valid Gemini API Key', async ({ page }) => {
-        // Mock successful Gemini API models response
-        await page.route('https://generativelanguage.googleapis.com/v1beta/models?key=*', async (route) => {
+    test('Valid Leonardo API Key', async ({ page }) => {
+        await page.route('**/api/leonardo/validate', async (route) => {
             await route.fulfill({
                 status: 200,
                 contentType: 'application/json',
-                body: JSON.stringify({ models: [] }),
+                body: JSON.stringify({ success: true }),
             });
         });
 
-        const apiKeyInput = page.getByLabel('Gemini API Key');
-        await apiKeyInput.fill('valid-gemini-key');
+        const apiKeyInput = page.getByLabel('Leonardo API Key');
+        await apiKeyInput.fill('valid-leonardo-key');
 
-        // Click the test button next to it (it's the first "Test" button)
-        const geminiTestBtn = page.getByRole('button', { name: 'Test' }).first();
-        await geminiTestBtn.click();
+        const leonardoTestBtn = page.getByRole('button', { name: 'Test' }).first();
+        await leonardoTestBtn.click();
 
-        await expect(page.getByText('✓ Connection successful')).toBeVisible();
+        await expect(page.getByText('✓ Leonardo connection successful')).toBeVisible();
     });
 
-    test('Invalid Gemini API Key', async ({ page }) => {
-        // Mock failed Gemini API key response
-        const errorMessage = 'API key not valid. Please pass a valid API key.';
-        await page.route('https://generativelanguage.googleapis.com/v1beta/models?key=*', async (route) => {
+    test('Invalid Leonardo API Key', async ({ page }) => {
+        const errorMessage = 'Leonardo API key is invalid.';
+        await page.route('**/api/leonardo/validate', async (route) => {
             await route.fulfill({
                 status: 400,
-                contentType: 'application/json',
-                body: JSON.stringify({ error: { message: errorMessage } }),
+                contentType: 'text/plain',
+                body: errorMessage,
             });
         });
 
-        const apiKeyInput = page.getByLabel('Gemini API Key');
-        await apiKeyInput.fill('invalid-gemini-key');
+        const apiKeyInput = page.getByLabel('Leonardo API Key');
+        await apiKeyInput.fill('invalid-leonardo-key');
 
-        const geminiTestBtn = page.getByRole('button', { name: 'Test' }).first();
-        await geminiTestBtn.click();
+        const leonardoTestBtn = page.getByRole('button', { name: 'Test' }).first();
+        await leonardoTestBtn.click();
 
-        await expect(page.getByText(`✗ Connection failed. Reason: ${errorMessage}`)).toBeVisible();
+        await expect(page.getByText(`✗ Leonardo connection failed. Reason: ${errorMessage}`)).toBeVisible();
     });
 
     test('Valid Dropbox Token', async ({ page }) => {
-        // Mock successful Dropbox response
         await page.route('https://api.dropboxapi.com/2/check/user', async (route) => {
             await route.fulfill({
                 status: 200,
@@ -66,7 +62,6 @@ test.describe('Settings API Configurations', () => {
     });
 
     test('Invalid Dropbox Token', async ({ page }) => {
-        // Mock failed Dropbox response
         const errorText = 'The given OAuth 2 access token is malformed.';
         await page.route('https://api.dropboxapi.com/2/check/user', async (route) => {
             await route.fulfill({

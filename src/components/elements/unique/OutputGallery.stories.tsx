@@ -6,11 +6,14 @@ import { OutputGallery } from './OutputGallery';
 const mockCreativeSlice = createSlice({
     name: 'creative',
     initialState: {
-        items: {},
+        creatives: {},
+        completedCount: 0,
+        totalCount: 0,
+        progressPct: 0,
     },
     reducers: {
-        setItems: (state, action) => {
-            state.items = action.payload;
+        setCreatives: (state, action) => {
+            state.creatives = action.payload;
         },
     },
 });
@@ -51,24 +54,31 @@ type Story = StoryObj<{ mockState: any }>;
 
 export const Empty: Story = {
     args: {
-        mockState: { items: {} } as any,
+        mockState: {
+            creatives: {},
+            completedCount: 0,
+            totalCount: 0,
+            progressPct: 0,
+        } as any,
     },
 };
 
 export const Pending: Story = {
     args: {
         mockState: {
-            items: {
+            creatives: {
                 'creative-1': {
                     id: 'creative-1',
                     productId: 'EcoBottle',
-                    format: 'Instagram Story',
                     aspectRatio: '9:16',
                     status: 'pending',
                     outputUrl: null,
                     error: null,
                 },
             },
+            completedCount: 0,
+            totalCount: 1,
+            progressPct: 0,
         } as any,
     },
 };
@@ -76,11 +86,10 @@ export const Pending: Story = {
 export const Success: Story = {
     args: {
         mockState: {
-            items: {
+            creatives: {
                 'creative-1': {
                     id: 'creative-1',
                     productId: 'EcoBottle',
-                    format: 'Instagram Story',
                     aspectRatio: '9:16',
                     status: 'completed',
                     outputUrl: 'https://picsum.photos/400/700',
@@ -89,31 +98,35 @@ export const Success: Story = {
                 'creative-2': {
                     id: 'creative-2',
                     productId: 'EcoBottle',
-                    format: 'Instagram Post',
                     aspectRatio: '1:1',
                     status: 'completed',
                     outputUrl: 'https://picsum.photos/500/500',
                     error: null,
                 },
             },
+            completedCount: 2,
+            totalCount: 2,
+            progressPct: 100,
         } as any,
     },
 };
 
-export const InvalidCredentialsError: Story = {
+export const GenerationError: Story = {
     args: {
         mockState: {
-            items: {
+            creatives: {
                 'creative-1': {
                     id: 'creative-1',
                     productId: 'EcoBottle',
-                    format: 'Instagram Story',
                     aspectRatio: '9:16',
                     status: 'failed',
                     outputUrl: null,
-                    error: 'API key not valid. Please pass a valid API key.',
+                    error: 'Leonardo API key is invalid.',
                 },
             },
+            completedCount: 1,
+            totalCount: 1,
+            progressPct: 100,
         } as any,
     },
 };

@@ -6,7 +6,7 @@ export const {
   setCurrentPage,
   setBriefRawText,
   loadExampleBriefText,
-  setApiKeyInput,
+  setLeonardoApiKeyInput,
   setDropboxAccessTokenInput,
   setElapsedSeconds,
   incrementElapsed,

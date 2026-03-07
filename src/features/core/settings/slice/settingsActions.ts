@@ -1,3 +1,8 @@
 import { settingsSlice } from './settingsSlice';
 
-export const { setApiKey, clearApiKey, setDropboxAccessToken, clearDropboxAccessToken } = settingsSlice.actions;
+export const {
+  setLeonardoApiKey,
+  clearLeonardoApiKey,
+  setDropboxAccessToken,
+  clearDropboxAccessToken,
+} = settingsSlice.actions;

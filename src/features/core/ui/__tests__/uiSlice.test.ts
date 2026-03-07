@@ -4,14 +4,14 @@ import {
   setCurrentPage,
   setBriefRawText,
   loadExampleBriefText,
-  setApiKeyInput,
+  setLeonardoApiKeyInput,
   incrementElapsed,
   resetElapsed,
 } from '../slice/uiActions';
 import {
   selectCurrentPage,
   selectBriefRawText,
-  selectApiKeyInput,
+  selectLeonardoApiKeyInput,
   selectElapsedSeconds,
 } from '../slice/uiSelectors';
 
@@ -59,12 +59,12 @@ describe('Story 0: UI State and SPA Routing', () => {
     });
   });
 
-  describe('When setApiKeyInput is dispatched', () => {
-    it('Then api key form input is tracked in Redux', () => {
+  describe('When setLeonardoApiKeyInput is dispatched', () => {
+    it('Then Leonardo API key form input is tracked in Redux', () => {
       const store = createTestStore();
-      store.dispatch(setApiKeyInput('sk-test-key'));
+      store.dispatch(setLeonardoApiKeyInput('leonardo-test-key'));
       const state = store.getState();
-      expect(selectApiKeyInput({ ui: state.ui } as any)).toBe('sk-test-key');
+      expect(selectLeonardoApiKeyInput({ ui: state.ui } as any)).toBe('leonardo-test-key');
     });
   });
 

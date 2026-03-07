@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { SettingsState } from '@/features/core/settings/types/settingsStateType';
 
 const initialState: SettingsState = {
-  apiKey: null,
+  leonardoApiKey: null,
   dropboxAccessToken: null,
 };
 
@@ -10,11 +10,11 @@ export const settingsSlice = createSlice({
   name: 'settings',
   initialState,
   reducers: {
-    setApiKey(state, action: PayloadAction<string>) {
-      state.apiKey = action.payload;
+    setLeonardoApiKey(state, action: PayloadAction<string>) {
+      state.leonardoApiKey = action.payload;
     },
-    clearApiKey(state) {
-      state.apiKey = null;
+    clearLeonardoApiKey(state) {
+      state.leonardoApiKey = null;
     },
     setDropboxAccessToken(state, action: PayloadAction<string>) {
       state.dropboxAccessToken = action.payload;

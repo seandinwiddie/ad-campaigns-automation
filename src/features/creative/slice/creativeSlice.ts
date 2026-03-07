@@ -63,8 +63,7 @@ export const creativeSlice = createSlice({
         formatName: string;
         outputUrl: string;
         metadata: {
-          originalCampaignMessage: string;
-          localizedCampaignMessage: string;
+          campaignMessage: string;
           targetRegion: string;
           generatedAtIso: string;
         };

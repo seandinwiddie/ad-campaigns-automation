@@ -5,7 +5,7 @@ export interface UiState {
   activeModal: string | null;
   currentPage: AppPage;
   briefRawText: string;
-  apiKeyInput: string;
+  leonardoApiKeyInput: string;
   dropboxAccessTokenInput: string;
   elapsedSeconds: number;
 }

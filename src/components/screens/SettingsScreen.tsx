@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { setApiKey, setDropboxAccessToken } from '@/features/core/settings/slice/settingsActions';
-import { selectApiKey, selectDropboxAccessToken } from '@/features/core/settings/slice/settingsSelectors';
-import { setApiKeyInput, setCurrentPage, setDropboxAccessTokenInput } from '@/features/core/ui/slice/uiActions';
-import { selectApiKeyInput, selectDropboxAccessTokenInput } from '@/features/core/ui/slice/uiSelectors';
-import { useTestGeminiApiKeyMutation, useTestDropboxTokenMutation } from '@/features/core/api/slice/apiSlice';
+import { setLeonardoApiKey, setDropboxAccessToken } from '@/features/core/settings/slice/settingsActions';
+import { selectLeonardoApiKey, selectDropboxAccessToken } from '@/features/core/settings/slice/settingsSelectors';
+import { setLeonardoApiKeyInput, setCurrentPage, setDropboxAccessTokenInput } from '@/features/core/ui/slice/uiActions';
+import { selectLeonardoApiKeyInput, selectDropboxAccessTokenInput } from '@/features/core/ui/slice/uiSelectors';
+import { useTestLeonardoApiKeyMutation, useTestDropboxTokenMutation } from '@/features/core/api/slice/apiSlice';
 import { Label } from '@/components/elements/generic/Label';
 import { Input } from '@/components/elements/generic/Input';
 import { Button } from '@/components/elements/generic/Button';
@@ -41,15 +41,15 @@ const extractErrorText = (error: MutationError): string => {
 
 export function SettingsScreen() {
   const dispatch = useAppDispatch();
-  const apiKeyInput = useAppSelector(selectApiKeyInput);
+  const leonardoApiKeyInput = useAppSelector(selectLeonardoApiKeyInput);
   const dropboxAccessTokenInput = useAppSelector(selectDropboxAccessTokenInput);
-  const currentApiKey = useAppSelector(selectApiKey);
+  const currentLeonardoApiKey = useAppSelector(selectLeonardoApiKey);
   const currentDropboxAccessToken = useAppSelector(selectDropboxAccessToken);
-  const hasValidInputs = apiKeyInput.trim().length > 0 && dropboxAccessTokenInput.trim().length > 0;
+  const hasValidInputs = leonardoApiKeyInput.trim().length > 0 && dropboxAccessTokenInput.trim().length > 0;
 
-  const [testGemini, { isLoading: isTestingGemini, isSuccess: geminiSuccess, isError: geminiError, error: geminiErrorObj }] = useTestGeminiApiKeyMutation();
+  const [testLeonardo, { isLoading: isTestingLeonardo, isSuccess: leonardoSuccess, isError: leonardoError, error: leonardoErrorObj }] = useTestLeonardoApiKeyMutation();
   const [testDropbox, { isLoading: isTestingDropbox, isSuccess: dropboxSuccess, isError: dropboxError, error: dropboxErrorObj }] = useTestDropboxTokenMutation();
-  const geminiErrorMessage = extractErrorText(geminiErrorObj as MutationError);
+  const leonardoErrorMessage = extractErrorText(leonardoErrorObj as MutationError);
   const dropboxErrorMessage = extractErrorText(dropboxErrorObj as MutationError);
 
   return (
@@ -65,7 +65,7 @@ export function SettingsScreen() {
             <div>
               <CardTitle className="text-2xl font-bold">System Credentials</CardTitle>
               <CardDescription className="text-sm mt-1">
-                Configure your API keys and storage tokens.
+                Configure Leonardo image generation and Dropbox output persistence.
               </CardDescription>
             </div>
           </div>
@@ -74,14 +74,14 @@ export function SettingsScreen() {
         <Separator className="opacity-50" />
 
         <CardContent className="space-y-8 pt-8">
-          {/* Gemini API Key Section */}
+          {/* Leonardo API key */}
           <div className="space-y-4">
             <div className="space-y-1">
               <Label htmlFor="api-key" className="text-sm font-bold uppercase tracking-wider text-primary">
-                Gemini API Key
+                Leonardo API Key
               </Label>
               <p className="text-xs text-muted-foreground">
-                Get your key: <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="underline font-medium hover:text-primary transition-colors">Google AI Studio</a>
+                Get your key: <a href="https://app.leonardo.ai/api-access" target="_blank" rel="noreferrer" className="underline font-medium hover:text-primary transition-colors">Leonardo API Access</a>
               </p>
             </div>
 
@@ -89,25 +89,25 @@ export function SettingsScreen() {
               <Input
                 id="api-key"
                 type="password"
-                value={apiKeyInput}
-                onChange={(e) => dispatch(setApiKeyInput(e.target.value))}
-                placeholder="Enter your API key"
+                value={leonardoApiKeyInput}
+                onChange={(e) => dispatch(setLeonardoApiKeyInput(e.target.value))}
+                placeholder="Enter your Leonardo API key"
                 className="font-mono text-sm"
               />
               <Button
                 variant="secondary"
                 size="sm"
                 className="px-6 font-bold uppercase text-[10px] tracking-widest"
-                disabled={!apiKeyInput.trim() || isTestingGemini}
-                onClick={() => testGemini({ apiKey: apiKeyInput.trim() })}
+                disabled={!leonardoApiKeyInput.trim() || isTestingLeonardo}
+                onClick={() => testLeonardo({ apiKey: leonardoApiKeyInput.trim() })}
               >
-                {isTestingGemini ? 'Testing...' : 'Test'}
+                {isTestingLeonardo ? 'Testing...' : 'Test'}
               </Button>
             </div>
-            {geminiSuccess && <p className="text-xs font-bold text-green-600 animate-in fade-in slide-in-from-top-1">✓ Connection successful</p>}
-            {geminiError && (
+            {leonardoSuccess && <p className="text-xs font-bold text-green-600 animate-in fade-in slide-in-from-top-1">✓ Leonardo connection successful</p>}
+            {leonardoError && (
               <p className="text-xs font-bold text-destructive animate-in fade-in slide-in-from-top-1">
-                ✗ Connection failed. Reason: {geminiErrorMessage}
+                ✗ Leonardo connection failed. Reason: {leonardoErrorMessage}
               </p>
             )}
           </div>
@@ -156,7 +156,7 @@ export function SettingsScreen() {
         <Separator className="opacity-50" />
 
         <CardContent className="flex items-center justify-end gap-3 py-6 bg-muted/20">
-          {currentApiKey && currentDropboxAccessToken && (
+          {currentLeonardoApiKey && currentDropboxAccessToken && (
             <Button
               variant="ghost"
               className="text-xs font-bold uppercase tracking-widest"
@@ -169,8 +169,9 @@ export function SettingsScreen() {
             size="lg"
             className="px-10 font-bold uppercase tracking-widest"
             onClick={() => {
-              dispatch(setApiKey(apiKeyInput.trim()));
+              dispatch(setLeonardoApiKey(leonardoApiKeyInput.trim()));
               dispatch(setDropboxAccessToken(dropboxAccessTokenInput.trim()));
+              dispatch(setCurrentPage('home'));
             }}
             disabled={!hasValidInputs}
           >

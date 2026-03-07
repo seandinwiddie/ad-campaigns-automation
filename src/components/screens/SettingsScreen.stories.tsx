@@ -50,12 +50,15 @@ export const Default: Story = {
         mockState: {
             ui: {
                 currentPage: 'settings',
-                apiKeyInput: '',
+                leonardoApiKeyInput: '',
                 dropboxAccessTokenInput: '',
-                pipelineElapsedTimeSeconds: 0,
+                elapsedSeconds: 0,
+                isLoading: false,
+                activeModal: null,
+                briefRawText: '',
             },
             settings: {
-                apiKey: '',
+                leonardoApiKey: '',
                 dropboxAccessToken: '',
             },
         },
@@ -67,12 +70,15 @@ export const WithInputs: Story = {
         mockState: {
             ui: {
                 currentPage: 'settings',
-                apiKeyInput: 'mock-gemini-key',
+                leonardoApiKeyInput: 'mock-leonardo-key',
                 dropboxAccessTokenInput: 'mock-dropbox-token',
-                pipelineElapsedTimeSeconds: 0,
+                elapsedSeconds: 0,
+                isLoading: false,
+                activeModal: null,
+                briefRawText: '',
             },
             settings: {
-                apiKey: '',
+                leonardoApiKey: '',
                 dropboxAccessToken: '',
             },
         },

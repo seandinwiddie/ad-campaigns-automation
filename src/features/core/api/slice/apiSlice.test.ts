@@ -5,7 +5,7 @@ const setupApiStore = () => {
     return configureStore({
         reducer: {
             [apiSlice.reducerPath]: apiSlice.reducer,
-            settings: (state = { apiKey: 'test-key', dropboxAccessToken: 'test-token' }) => state,
+            settings: (state = { leonardoApiKey: 'test-key', dropboxAccessToken: 'test-token' }) => state,
         },
         middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware),
     });
@@ -20,33 +20,73 @@ describe('apiSlice', () => {
         jest.resetAllMocks();
     });
 
-    describe('testGeminiApiKey', () => {
+    describe('testLeonardoApiKey', () => {
         it('returns success when API key is valid', async () => {
             (global.fetch as jest.Mock).mockResolvedValueOnce({
                 ok: true,
-                json: async () => ({}),
+                json: async () => ({ success: true }),
             });
 
             const store = setupApiStore();
-            const action = await store.dispatch(apiSlice.endpoints.testGeminiApiKey.initiate({ apiKey: 'valid-key' }));
+            const action = await store.dispatch(apiSlice.endpoints.testLeonardoApiKey.initiate({ apiKey: 'valid-key' }));
 
             expect(action.data).toEqual({ success: true });
             expect(action.error).toBeUndefined();
         });
 
         it('returns parsed error message when API key is invalid', async () => {
-            const errorMsg = 'API key not valid. Please pass a valid API key.';
+            const errorMsg = 'Leonardo API key is invalid.';
             (global.fetch as jest.Mock).mockResolvedValueOnce({
                 ok: false,
                 status: 400,
-                text: async () => JSON.stringify({ error: { message: errorMsg } }),
+                text: async () => errorMsg,
             });
 
             const store = setupApiStore();
-            const action = await store.dispatch(apiSlice.endpoints.testGeminiApiKey.initiate({ apiKey: 'invalid-key' }));
+            const action = await store.dispatch(apiSlice.endpoints.testLeonardoApiKey.initiate({ apiKey: 'invalid-key' }));
 
             expect(action.error).toBeDefined();
             expect((action.error as any).data).toEqual(errorMsg);
+        });
+    });
+
+    describe('generateImage', () => {
+        it('returns base64 image data when generation succeeds', async () => {
+            (global.fetch as jest.Mock).mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({ imageData: 'abc123' }),
+            });
+
+            const store = setupApiStore();
+            const action = await store.dispatch(
+                apiSlice.endpoints.generateImage.initiate({
+                    prompt: 'EcoBottle: sustainable bottle',
+                    leonardoApiKey: 'valid-key',
+                })
+            );
+
+            expect(action.data).toEqual({ imageData: 'abc123' });
+            expect(action.error).toBeUndefined();
+        });
+
+        it('returns request error text when generation fails', async () => {
+            const errorText = 'Leonardo generation timed out before an image was ready.';
+            (global.fetch as jest.Mock).mockResolvedValueOnce({
+                ok: false,
+                status: 504,
+                text: async () => errorText,
+            });
+
+            const store = setupApiStore();
+            const action = await store.dispatch(
+                apiSlice.endpoints.generateImage.initiate({
+                    prompt: 'EcoBottle: sustainable bottle',
+                    leonardoApiKey: 'valid-key',
+                })
+            );
+
+            expect(action.error).toBeDefined();
+            expect((action.error as any).data).toEqual(errorText);
         });
     });
 

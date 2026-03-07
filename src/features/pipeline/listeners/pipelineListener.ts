@@ -4,8 +4,6 @@ import { apiSlice } from '@/features/core/api/slice/apiSlice';
 import {
   startPipeline,
   advanceStep,
-  prepareLocalization,
-  setLocalizedCampaignMessage,
   setCurrentProduct,
   productCompleted,
   productFailed,
@@ -63,10 +61,9 @@ const resolveRequestErrorMessage = (value: unknown): string => {
 
 const processProduct = async (
   product: Product,
-  apiKey: string,
+  leonardoApiKey: string,
   dropboxAccessToken: string,
-  originalCampaignMessage: string,
-  localizedCampaignMessage: string,
+  campaignMessage: string,
   targetRegion: string,
   dispatch: AppDispatch,
   getState: () => RootState
@@ -86,7 +83,7 @@ const processProduct = async (
       generated = await dispatch(
         apiSlice.endpoints.generateImage.initiate({
           prompt,
-          apiKey,
+          leonardoApiKey,
         })
       ).unwrap();
     } catch (err: unknown) {
@@ -117,15 +114,14 @@ const processProduct = async (
     ASPECT_RATIOS.map(async (ratio) => {
       const creativeId = `${product.id}_${ratio.ratio}`;
       const metadata = {
-        originalCampaignMessage,
-        localizedCampaignMessage,
+        campaignMessage,
         targetRegion,
         generatedAtIso: new Date().toISOString(),
       };
       const outputPath = getCreativeOutputPath(product.name, ratio.name);
 
       try {
-        const composed = await buildCreativeVariant(sourceImageUrl, ratio, localizedCampaignMessage);
+        const composed = await buildCreativeVariant(sourceImageUrl, ratio, campaignMessage);
         await dispatch(
           apiSlice.endpoints.saveCreativeToDropbox.initiate({
             path: `/${outputPath}`,
@@ -162,7 +158,7 @@ const processProduct = async (
 
   const detectedColors = await detectDominantColors(sourceImageUrl);
   dispatch(checkBrandColors(detectedColors));
-  dispatch(checkProhibitedWords(localizedCampaignMessage));
+  dispatch(checkProhibitedWords(campaignMessage));
 
   const issues = getState().compliance.issues;
   const colorCompliance = issues.every((issue) => issue.type !== 'brand_color');
@@ -183,7 +179,7 @@ listenerMiddleware.startListening({
     const startedAt = Date.now();
     const state = listenerApi.getState() as RootState;
     const brief = state.brief.brief;
-    const apiKey = state.settings.apiKey;
+    const leonardoApiKey = state.settings.leonardoApiKey;
     const dropboxAccessToken = state.settings.dropboxAccessToken;
 
     if (!brief) {
@@ -191,8 +187,8 @@ listenerMiddleware.startListening({
       return;
     }
 
-    if (!apiKey) {
-      listenerApi.dispatch(pipelineError('API key not configured'));
+    if (!leonardoApiKey) {
+      listenerApi.dispatch(pipelineError('Leonardo API key not configured'));
       return;
     }
 
@@ -215,34 +211,9 @@ listenerMiddleware.startListening({
       );
     }
 
-    listenerApi.dispatch(
-      prepareLocalization({
-        targetRegion: brief.targetRegion,
-        campaignMessage: brief.campaignMessage,
-      })
-    );
-
-    const preTranslateState = listenerApi.getState() as RootState;
-    const targetLanguage = preTranslateState.pipeline.targetLanguage;
-
-    if (targetLanguage) {
-      try {
-        const translated = await listenerApi.dispatch(
-          apiSlice.endpoints.translateText.initiate({
-            text: brief.campaignMessage,
-            targetLanguage,
-            apiKey,
-          })
-        ).unwrap();
-        listenerApi.dispatch(setLocalizedCampaignMessage(translated.translatedText));
-      } catch {
-        listenerApi.dispatch(setLocalizedCampaignMessage(brief.campaignMessage));
-      }
-    }
-
-    const localizedState = listenerApi.getState() as RootState;
-    const originalCampaignMessage = localizedState.pipeline.originalCampaignMessage || brief.campaignMessage;
-    const localizedCampaignMessage = localizedState.pipeline.localizedCampaignMessage || brief.campaignMessage;
+    // Post-MVP: re-enable localization after selecting a dedicated text-generation provider.
+    // MVP intentionally keeps the original campaign message unchanged for every region.
+    const campaignMessage = brief.campaignMessage;
 
     listenerApi.dispatch(initCreatives({ productIds: brief.products.map((p) => p.id) }));
 
@@ -256,10 +227,9 @@ listenerMiddleware.startListening({
       try {
         await processProduct(
           product,
-          apiKey,
+          leonardoApiKey,
           dropboxAccessToken,
-          originalCampaignMessage,
-          localizedCampaignMessage,
+          campaignMessage,
           brief.targetRegion,
           listenerApi.dispatch as AppDispatch,
           () => listenerApi.getState() as RootState

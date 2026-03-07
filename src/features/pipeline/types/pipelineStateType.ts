@@ -13,9 +13,6 @@ export interface PipelineState {
   error: string | null;
   errors: PipelineError[];
   currentProduct: string | null;
-  originalCampaignMessage: string;
-  localizedCampaignMessage: string;
-  targetLanguage: string | null;
   progressPct: number;
   failedProducts: string[];
   productStatuses: Record<string, ProductStatus>;

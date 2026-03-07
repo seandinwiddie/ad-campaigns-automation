@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import settingsReducer from '../slice/settingsSlice';
-import { setApiKey, clearApiKey } from '../slice/settingsActions';
-import { selectApiKey, selectHasApiKey } from '../slice/settingsSelectors';
+import { setLeonardoApiKey, clearLeonardoApiKey } from '../slice/settingsActions';
+import { selectLeonardoApiKey, selectHasLeonardoApiKey } from '../slice/settingsSelectors';
 import type { SettingsState } from '../types/settingsStateType';
 
 function createTestStore(preloadedState?: { settings: SettingsState }) {
@@ -12,51 +12,51 @@ function createTestStore(preloadedState?: { settings: SettingsState }) {
 }
 
 describe('Story 1: API Key Configuration', () => {
-  describe('Given no stored API key', () => {
-    it('Then selectHasApiKey returns false', () => {
+  describe('Given no stored Leonardo API key', () => {
+    it('Then selectHasLeonardoApiKey returns false', () => {
       const store = createTestStore();
       const state = store.getState();
-      expect(selectHasApiKey({ settings: state.settings } as any)).toBe(false);
+      expect(selectHasLeonardoApiKey({ settings: state.settings } as any)).toBe(false);
     });
 
-    it('Then selectApiKey returns null', () => {
+    it('Then selectLeonardoApiKey returns null', () => {
       const store = createTestStore();
       const state = store.getState();
-      expect(selectApiKey({ settings: state.settings } as any)).toBeNull();
-    });
-  });
-
-  describe('When setApiKey is dispatched', () => {
-    it('Then selectApiKey returns the key', () => {
-      const store = createTestStore();
-      store.dispatch(setApiKey('sk-test-key-12345'));
-      const state = store.getState();
-      expect(selectApiKey({ settings: state.settings } as any)).toBe('sk-test-key-12345');
-    });
-
-    it('Then selectHasApiKey returns true', () => {
-      const store = createTestStore();
-      store.dispatch(setApiKey('sk-test-key-12345'));
-      const state = store.getState();
-      expect(selectHasApiKey({ settings: state.settings } as any)).toBe(true);
+      expect(selectLeonardoApiKey({ settings: state.settings } as any)).toBeNull();
     });
   });
 
-  describe('When clearApiKey is dispatched', () => {
-    it('Then selectApiKey returns null', () => {
+  describe('When setLeonardoApiKey is dispatched', () => {
+    it('Then selectLeonardoApiKey returns the key', () => {
       const store = createTestStore();
-      store.dispatch(setApiKey('sk-test-key-12345'));
-      store.dispatch(clearApiKey());
+      store.dispatch(setLeonardoApiKey('leonardo-test-key-12345'));
       const state = store.getState();
-      expect(selectApiKey({ settings: state.settings } as any)).toBeNull();
+      expect(selectLeonardoApiKey({ settings: state.settings } as any)).toBe('leonardo-test-key-12345');
     });
 
-    it('Then selectHasApiKey returns false', () => {
+    it('Then selectHasLeonardoApiKey returns true', () => {
       const store = createTestStore();
-      store.dispatch(setApiKey('sk-test-key-12345'));
-      store.dispatch(clearApiKey());
+      store.dispatch(setLeonardoApiKey('leonardo-test-key-12345'));
       const state = store.getState();
-      expect(selectHasApiKey({ settings: state.settings } as any)).toBe(false);
+      expect(selectHasLeonardoApiKey({ settings: state.settings } as any)).toBe(true);
+    });
+  });
+
+  describe('When clearLeonardoApiKey is dispatched', () => {
+    it('Then selectLeonardoApiKey returns null', () => {
+      const store = createTestStore();
+      store.dispatch(setLeonardoApiKey('leonardo-test-key-12345'));
+      store.dispatch(clearLeonardoApiKey());
+      const state = store.getState();
+      expect(selectLeonardoApiKey({ settings: state.settings } as any)).toBeNull();
+    });
+
+    it('Then selectHasLeonardoApiKey returns false', () => {
+      const store = createTestStore();
+      store.dispatch(setLeonardoApiKey('leonardo-test-key-12345'));
+      store.dispatch(clearLeonardoApiKey());
+      const state = store.getState();
+      expect(selectHasLeonardoApiKey({ settings: state.settings } as any)).toBe(false);
     });
   });
 });

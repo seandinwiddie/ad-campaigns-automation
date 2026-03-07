@@ -1,6 +1,5 @@
 export interface CreativeMetadata {
-  originalCampaignMessage: string;
-  localizedCampaignMessage: string;
+  campaignMessage: string;
   targetRegion: string;
   generatedAtIso: string;
 }

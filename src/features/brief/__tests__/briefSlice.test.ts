@@ -1,8 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
-import briefReducer, {
-  type BriefState,
-} from '../slice/briefSlice';
+import briefReducer from '../slice/briefSlice';
 import type { CampaignBrief } from '../types/campaignBriefType';
+import type { BriefState } from '../types/briefStateType';
 import { loadBrief } from '../thunks/briefThunks';
 import { selectBrief, selectIsBriefValid, selectValidationErrors } from '../slice/briefSelectors';
 
