@@ -312,3 +312,6 @@
 
 - [ ] Refactor `apiSlice` and pipeline listener to use a unified abstraction (e.g., LangChain or other) to support plug-and-play for any provider (Firefly, etc.)
 - [x] Multi-provider image fallback chain: Gemini → OpenAI (DALL-E 3, DALL-E 2) → Pollinations.ai (free)
+- [ ] Dedicated Templating API (Bannerbear or Cloudinary) for sophisticated text overlay instead of canvas API.
+- [ ] Implement a Composite / Image-to-Image Workflow (layered on AI background) to guarantee 100% brand/product fidelity.
+- [ ] Turn compliance into an active feedback loop with auto-retry on failed generations and pre-emptive text checking.
