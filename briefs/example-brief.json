@@ -1,0 +1,26 @@
+{
+  "campaignName": "Summer Eco Campaign 2025",
+  "products": [
+    {
+      "name": "EcoBottle",
+      "description": "Sustainable water bottle made from recycled ocean plastic",
+      "existingAsset": "/assets/input/ecobottle.svg"
+    },
+    {
+      "name": "SolarCharger",
+      "description": "Portable solar-powered phone charger for outdoor adventures",
+      "existingAsset": "/assets/input/solarcharger.svg"
+    },
+    {
+      "name": "BambooCase",
+      "description": "Biodegradable phone case crafted from natural bamboo"
+    }
+  ],
+  "targetRegion": "United States",
+  "targetAudience": "Environmentally conscious millennials aged 25-35",
+  "campaignMessage": "Stay Green, Live Clean",
+  "brandGuidelines": {
+    "colors": ["#00A86B", "#FFFFFF"],
+    "prohibitedWords": ["free", "guaranteed", "miracle", "unlimited"]
+  }
+}

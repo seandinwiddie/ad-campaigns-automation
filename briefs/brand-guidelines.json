@@ -1,0 +1,14 @@
+{
+    "colors": [
+        "#00A86B",
+        "#FFFFFF",
+        "#333333"
+    ],
+    "prohibitedWords": [
+        "cheap",
+        "guaranteed",
+        "free",
+        "miracle",
+        "secret"
+    ]
+}
