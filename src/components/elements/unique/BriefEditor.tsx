@@ -2,8 +2,8 @@
 
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { loadExampleBriefText, setBriefRawText } from '@/features/core/ui/slice/uiActions';
-import { selectBriefRawText } from '@/features/core/ui/slice/uiSelectors';
-import { clearBrief } from '@/features/brief/slice/briefActions';
+import { selectBriefRawText, selectCanLoadBrief } from '@/features/core/ui/slice/uiSelectors';
+import { clearBriefEditor } from '@/features/brief/slice/briefWorkflowActions';
 import { loadBrief } from '@/features/brief/thunks/briefThunks';
 import { selectProducts, selectValidationErrors, selectIsBriefValid } from '@/features/brief/slice/briefSelectors';
 import { Textarea } from '@/components/elements/generic/Textarea';
@@ -16,6 +16,7 @@ export function BriefEditor() {
   const products = useAppSelector(selectProducts);
   const validationErrors = useAppSelector(selectValidationErrors);
   const isBriefValid = useAppSelector(selectIsBriefValid);
+  const canLoadBrief = useAppSelector(selectCanLoadBrief);
 
   return (
     <div className="space-y-6">
@@ -30,10 +31,7 @@ export function BriefEditor() {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => {
-            dispatch(setBriefRawText(''));
-            dispatch(clearBrief());
-          }}
+          onClick={() => dispatch(clearBriefEditor())}
         >
           Clear
         </Button>
@@ -50,7 +48,7 @@ export function BriefEditor() {
       <div className="flex items-center justify-between">
         <Button
           onClick={() => dispatch(loadBrief(rawText))}
-          disabled={rawText.trim().length === 0}
+          disabled={!canLoadBrief}
           size="lg"
         >
           Validate &amp; Load Brief
@@ -79,10 +77,10 @@ export function BriefEditor() {
           </AlertTitle>
           <AlertDescription>
             <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-              {products.map((p, i) => (
-                <div key={i} className="rounded-md border bg-background p-3 shadow-sm">
-                  <div className="font-semibold">{p.name}</div>
-                  <div className="text-xs text-muted-foreground">{p.description}</div>
+              {products.map((product) => (
+                <div key={product.id} className="rounded-md border bg-background p-3 shadow-sm">
+                  <div className="font-semibold">{product.name}</div>
+                  <div className="text-xs text-muted-foreground">{product.description}</div>
                 </div>
               ))}
             </div>

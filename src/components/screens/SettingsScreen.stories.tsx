@@ -1,86 +1,46 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Provider } from 'react-redux';
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import type { RootState } from '@/app/rootReducer';
+import { createAppStorybookState, withAppState } from '@/test-support/storybook/withAppState';
 import { SettingsScreen } from './SettingsScreen';
-import { uiSlice } from '@/features/core/ui/slice/uiSlice';
-import { settingsSlice } from '@/features/core/settings/slice/settingsSlice';
-import { apiSlice } from '@/features/core/api/slice/apiSlice';
 
-const rootReducer = combineReducers({
-    ui: uiSlice.reducer,
-    settings: settingsSlice.reducer,
-    [apiSlice.reducerPath]: apiSlice.reducer,
+const buildState = (overrides: Partial<RootState>): Partial<RootState> => ({
+  ...createAppStorybookState(),
+  ...overrides,
 });
 
-const createMockStore = (preloadedState?: any) => {
-    return configureStore({
-        reducer: rootReducer as any,
-        preloadedState: preloadedState as any,
-        middleware: (getDefaultMiddleware) =>
-            getDefaultMiddleware({
-                serializableCheck: false,
-            }).concat(apiSlice.middleware) as any,
-    });
-};
-
 const meta: Meta<typeof SettingsScreen> = {
-    title: 'Screens/SettingsScreen',
-    component: SettingsScreen,
-    parameters: {
-        layout: 'centered',
-    },
-    decorators: [
-        (Story, context) => {
-            const mockState = (context.args as any).mockState;
-            const store = createMockStore(mockState);
-            return (
-                <Provider store={store}>
-                    <Story />
-                </Provider>
-            );
-        },
-    ],
+  title: 'Screens/SettingsScreen',
+  component: SettingsScreen,
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+  },
+  decorators: [withAppState],
 };
 
 export default meta;
-type Story = StoryObj<{ mockState: any }>;
+type Story = StoryObj<{ mockState: Partial<RootState> }>;
 
 export const Default: Story = {
-    args: {
-        mockState: {
-            ui: {
-                currentPage: 'settings',
-                leonardoApiKeyInput: '',
-                dropboxAccessTokenInput: '',
-                elapsedSeconds: 0,
-                isLoading: false,
-                activeModal: null,
-                briefRawText: '',
-            },
-            settings: {
-                leonardoApiKey: '',
-                dropboxAccessToken: '',
-            },
-        },
-    },
+  args: {
+    mockState: buildState({
+      ui: {
+        ...createAppStorybookState().ui,
+        currentPage: 'settings',
+      },
+    }),
+  },
 };
 
 export const WithInputs: Story = {
-    args: {
-        mockState: {
-            ui: {
-                currentPage: 'settings',
-                leonardoApiKeyInput: 'mock-leonardo-key',
-                dropboxAccessTokenInput: 'mock-dropbox-token',
-                elapsedSeconds: 0,
-                isLoading: false,
-                activeModal: null,
-                briefRawText: '',
-            },
-            settings: {
-                leonardoApiKey: '',
-                dropboxAccessToken: '',
-            },
-        },
-    },
+  args: {
+    mockState: buildState({
+      ui: {
+        ...createAppStorybookState().ui,
+        currentPage: 'settings',
+        leonardoApiKeyInput: 'mock-leonardo-key',
+        dropboxAccessTokenInput: 'mock-dropbox-token',
+      },
+    }),
+  },
 };

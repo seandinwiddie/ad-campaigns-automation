@@ -6,3 +6,5 @@ export const selectHasLeonardoApiKey = (state: RootState): boolean =>
 export const selectDropboxAccessToken = (state: RootState): string | null => state.settings.dropboxAccessToken;
 export const selectHasDropboxAccessToken = (state: RootState): boolean =>
   state.settings.dropboxAccessToken !== null && state.settings.dropboxAccessToken.length > 0;
+export const selectHasSavedCredentials = (state: RootState): boolean =>
+  selectHasLeonardoApiKey(state) && selectHasDropboxAccessToken(state);

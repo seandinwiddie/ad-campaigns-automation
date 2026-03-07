@@ -1,6 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { initializeStore } from '@/app/persistenceMiddleware';
 import { apiSlice } from '@/features/core/api/slice/apiSlice';
 import { persistenceMiddleware } from '@/app/persistenceMiddleware';
+import { briefListenerMiddleware } from '@/features/brief/listeners/briefListener';
+import { settingsListenerMiddleware } from '@/features/core/settings/listeners/settingsListener';
 import { listenerMiddleware } from '@/features/pipeline/listeners/pipelineListener';
 import { rootReducer, type RootState } from '@/app/rootReducer';
 
@@ -15,6 +18,8 @@ const makeStore = () => {
           ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
         },
       })
+        .prepend(settingsListenerMiddleware.middleware)
+        .prepend(briefListenerMiddleware.middleware)
         .prepend(persistenceMiddleware.middleware)
         .prepend(listenerMiddleware.middleware)
         .concat(apiSlice.middleware);
@@ -38,6 +43,10 @@ const makeStore = () => {
 };
 
 export const store = makeStore();
+
+if (typeof window !== 'undefined') {
+  initializeStore(store.dispatch);
+}
 
 export type { RootState };
 export type AppDispatch = typeof store.dispatch;

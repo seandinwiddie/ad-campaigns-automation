@@ -30,6 +30,10 @@ const initialState: UiState = {
   briefRawText: '',
   leonardoApiKeyInput: '',
   dropboxAccessTokenInput: '',
+  leonardoValidationStatus: 'idle',
+  leonardoValidationMessage: null,
+  dropboxValidationStatus: 'idle',
+  dropboxValidationMessage: null,
   elapsedSeconds: 0,
 };
 
@@ -54,9 +58,37 @@ export const uiSlice = createSlice({
     },
     setLeonardoApiKeyInput: (state, action: PayloadAction<string>) => {
       state.leonardoApiKeyInput = action.payload;
+      state.leonardoValidationStatus = 'idle';
+      state.leonardoValidationMessage = null;
     },
     setDropboxAccessTokenInput: (state, action: PayloadAction<string>) => {
       state.dropboxAccessTokenInput = action.payload;
+      state.dropboxValidationStatus = 'idle';
+      state.dropboxValidationMessage = null;
+    },
+    requestLeonardoValidation: (state) => {
+      state.leonardoValidationStatus = 'pending';
+      state.leonardoValidationMessage = null;
+    },
+    leonardoValidationSucceeded: (state) => {
+      state.leonardoValidationStatus = 'success';
+      state.leonardoValidationMessage = null;
+    },
+    leonardoValidationFailed: (state, action: PayloadAction<string>) => {
+      state.leonardoValidationStatus = 'error';
+      state.leonardoValidationMessage = action.payload;
+    },
+    requestDropboxValidation: (state) => {
+      state.dropboxValidationStatus = 'pending';
+      state.dropboxValidationMessage = null;
+    },
+    dropboxValidationSucceeded: (state) => {
+      state.dropboxValidationStatus = 'success';
+      state.dropboxValidationMessage = null;
+    },
+    dropboxValidationFailed: (state, action: PayloadAction<string>) => {
+      state.dropboxValidationStatus = 'error';
+      state.dropboxValidationMessage = action.payload;
     },
     setElapsedSeconds: (state, action: PayloadAction<number>) => {
       state.elapsedSeconds = action.payload;

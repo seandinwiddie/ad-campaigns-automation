@@ -14,16 +14,24 @@ function createTestStore(preloadedState?: { compliance: ComplianceState }) {
 
 describe('Story 7: Brand Compliance', () => {
   describe('Given brand colors configured', () => {
-    it('Then checkBrandColors reports missing colors when not all are present', () => {
+    it('Then checkBrandColors reports an issue when none of the configured colors are detected', () => {
       const store = createTestStore();
       store.dispatch(setBrandColors(['#FF0000', '#00FF00', '#0000FF']));
-      // Only using 2 of 3 brand colors
-      store.dispatch(checkBrandColors(['#FF0000', '#00FF00']));
+      store.dispatch(checkBrandColors(['not-a-color']));
       const state = store.getState();
       const issues = selectComplianceIssues({ compliance: state.compliance } as any);
       expect(issues).toHaveLength(1);
       expect(issues[0].type).toBe('brand_color');
-      expect(issues[0].detail).toContain('#0000FF');
+      expect(issues[0].detail).toContain('None of the brand colors');
+    });
+
+    it('Then checkBrandColors accepts a partial match when at least one configured color is present', () => {
+      const store = createTestStore();
+      store.dispatch(setBrandColors(['#FF0000', '#00FF00', '#0000FF']));
+      store.dispatch(checkBrandColors(['#FF0000']));
+      const state = store.getState();
+      expect(selectComplianceIssues({ compliance: state.compliance } as any)).toHaveLength(0);
+      expect(selectIsCompliant({ compliance: state.compliance } as any)).toBe(true);
     });
 
     it('Then checkBrandColors reports no issues when all are present', () => {

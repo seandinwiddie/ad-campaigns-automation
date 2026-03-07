@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateLeonardoImage } from '@/lib/leonardo';
+import { generateLeonardoImage } from '@/features/core/api/client/leonardoClient';
 
 export const runtime = 'nodejs';
 

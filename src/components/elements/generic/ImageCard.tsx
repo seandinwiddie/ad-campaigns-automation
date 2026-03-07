@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "./Card"
 import { Badge } from "./Badge"
-import { cn } from "@/lib/utils"
+import { cn } from "@/common/cn"
 
 interface ImageCardProps extends React.HTMLAttributes<HTMLDivElement> {
     src: string

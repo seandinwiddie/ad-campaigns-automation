@@ -1,14 +1,13 @@
 'use client';
 
 import { useAppSelector } from '@/app/hooks';
-import { selectAllReports } from '@/features/compliance/slice/complianceSelectors';
+import { selectComplianceReportEntries } from '@/features/compliance/slice/complianceSelectors';
 import { Badge } from '@/components/elements/generic/Badge';
 import { CardDescription } from '@/components/elements/generic/Card';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/elements/generic/Table';
 
 export function ComplianceReport() {
-  const reports = useAppSelector(selectAllReports);
-  const entries = Object.values(reports);
+  const entries = useAppSelector(selectComplianceReportEntries);
 
   if (entries.length === 0) {
     return <CardDescription>No compliance reports available.</CardDescription>;

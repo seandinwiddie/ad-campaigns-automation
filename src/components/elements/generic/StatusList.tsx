@@ -1,5 +1,5 @@
 import * as React from "react"
-import { cn } from "@/lib/utils"
+import { cn } from "@/common/cn"
 import { Check, Loader2, AlertCircle } from "lucide-react"
 
 interface StatusListItemProps extends React.HTMLAttributes<HTMLDivElement> {

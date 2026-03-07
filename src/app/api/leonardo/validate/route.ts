@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { validateLeonardoApiKey } from '@/lib/leonardo';
+import { validateLeonardoApiKey } from '@/features/core/api/client/leonardoClient';
 
 export const runtime = 'nodejs';
 
