@@ -27,7 +27,7 @@ This script is tailored for the Adobe Forward Deployed AI Engineer assessment wh
 
 ### 1. Introduction & Problem Statement (0:00 - 0:20)
 - **Visual**: Start on the **Settings Screen**.
-- **Audio/Action**: "This is a demonstration of the Creative Automation Pipeline, built as a practical MVP for high-volume campaign production. The goal is to increase campaign velocity, preserve brand consistency, and make creative operations more measurable."
+- **Audio/Action**: "This is a demonstration of a Creative Automation Pipeline, built as a practical POC for high-volume campaign production. The goal is to increase campaign velocity, preserve brand consistency, and make creative operations more measurable."
 
 ### 2. Credential Validation & External Integrations (0:20 - 0:45)
 - **Visual**: Paste the **Leonardo API Key** and **Dropbox Access Token**.
