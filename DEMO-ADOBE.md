@@ -37,11 +37,11 @@ This script is tailored for the Adobe Forward Deployed AI Engineer assessment wh
 ### 3. Structured Campaign Brief Input (0:45 - 1:10)
 - **Visual**: Move to the **Home Screen**.
 - **Action**: Click **Load Example**, then **Validate & Load Brief**.
-- **Audio/Action**: "The pipeline accepts a structured campaign brief in JSON or YAML. This example contains three products, target audience and region metadata, a campaign message, and brand guidelines including colors and prohibited words."
+- **Audio/Action**: "The pipeline accepts a structured campaign brief in JSON or YAML. This example contains two products, target audience and region metadata, a campaign message, and brand guidelines including colors and prohibited words."
 
 ### 4. Asset Resolution Strategy (1:10 - 1:35)
 - **Visual**: Click **Run Pipeline for 3 Products** and point to the **Pipeline Screen**.
-- **Audio/Action**: "This run demonstrates two important production cases. EcoBottle and SolarCharger reuse existing assets, while BambooCase has no source asset, so the system generates a new hero image through Leonardo. The operator can watch the workflow advance through validation, asset resolution, generation, and composition."
+- **Audio/Action**: "This run demonstrates two important production cases. EcoBottle and SolarCharger. The operator can watch the workflow advance through validation, asset resolution, generation, and composition."
 
 ### 5. Parallel Creative Production (1:35 - 2:00)
 - **Visual**: Stay on the progress view while products move through the pipeline.
