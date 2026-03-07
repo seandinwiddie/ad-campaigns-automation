@@ -10,6 +10,9 @@ function Progress({
   value,
   ...props
 }: React.ComponentProps<typeof ProgressPrimitive.Root>) {
+  const hasAccessibleName =
+    typeof props['aria-label'] === 'string' && props['aria-label'].trim().length > 0;
+
   return (
     <ProgressPrimitive.Root
       data-slot="progress"
@@ -18,6 +21,7 @@ function Progress({
         className
       )}
       {...props}
+      aria-label={hasAccessibleName ? props['aria-label'] : 'Progress'}
     >
       <ProgressPrimitive.Indicator
         data-slot="progress-indicator"

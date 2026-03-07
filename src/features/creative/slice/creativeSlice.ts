@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { CreativeAspectRatio } from '../types/creativeAspectRatioType';
-import type { Creative } from '../types/creativeType';
 import type { CreativeState } from '../types/creativeStateType';
 
 export const ASPECT_RATIOS: CreativeAspectRatio[] = ['1:1', '16:9', '9:16'];
@@ -88,6 +87,7 @@ export const creativeSlice = createSlice({
       if (state.creatives[id]) {
         state.creatives[id].status = 'failed';
         state.creatives[id].error = error;
+        state.completedCount += 1;
         recalculateProgress(state);
       }
     },

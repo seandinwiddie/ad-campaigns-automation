@@ -4,11 +4,17 @@ import { Provider } from 'react-redux';
 import { store } from '@/app/store';
 import { initializeStore } from '@/app/persistenceMiddleware';
 
-// Initialize store synchronously on module load (client-side only)
-if (typeof window !== 'undefined') {
+let initialized = false;
+
+const ensureStoreInitialized = (): void => {
+  if (initialized || typeof window === 'undefined') {
+    return;
+  }
   initializeStore(store.dispatch);
-}
+  initialized = true;
+};
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
+  ensureStoreInitialized();
   return <Provider store={store}>{children}</Provider>;
 }

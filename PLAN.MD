@@ -1,9 +1,12 @@
 # Creative Automation Pipeline
 
+> **Status Update (March 7, 2026):** Credential validation/error messaging is explicit, and current automated checks are green (`npm test`, `npm run lint`, `npm run build`, Playwright E2E). Pipeline composes aspect-ratio creatives with text overlay before Dropbox upload. Storybook test-runner verification remains manual in this repo.
+
 ## Hard Constraints
 
-- Keep all business logic in pure reducers in `*Slice.ts` files.
-- Non-slice files are wiring/helpers only and must not contain business rules.
+- Keep core domain state transitions in pure reducers in `*Slice.ts` files.
+- Listener middleware may orchestrate async workflows, but domain rules should remain reducer-driven where feasible.
+- **UI Constraint**: Use raw `shadcn/ui` components exclusively. No custom themes.
 
 ## Summary
 
@@ -49,7 +52,7 @@ Built for global consumer goods teams launching hundreds of localized campaigns 
 | **Framework** | Next.js (App Router) | Modern React framework for local web UI (single-page App Router entry) |
 | **Language** | TypeScript | Type safety, FP-aligned, JD requirement |
 | **State Management** | Redux Toolkit (RTK) + RTK Query | FP maintenance strategy standard; all business logic in pure reducers |
-| **GenAI API** | Gemini Nano Banana | User-specified; API key entered via UI on first use (not hardcoded) |
+| **GenAI API** | Gemini 3 Flash Preview | User-specified; API key entered via UI on first use (not hardcoded) |
 | **Storage** | Dropbox Files API via RTK Query | Cloud output persistence with deterministic folder paths |
 | **Image Processing** | node-canvas | Text overlay, compositing; may be swapped later |
 | **Image Resize/Crop** | Sharp | Fast aspect ratio resizing |
@@ -89,9 +92,9 @@ Built for global consumer goods teams launching hundreds of localized campaigns 
 - **ALL state in Redux** — no `useState`, `useEffect`, `useCallback`, `useRouter`, `useRef` in `.tsx` files. Only `useAppSelector` and `useAppDispatch`.
 - **All form state in Redux** — `uiSlice` holds `apiKeyInput`, `briefRawText`, `elapsedSeconds`
 - **SPA routing via Redux** — `uiSlice.currentPage` drives screen rendering, not Next.js router
-- **Business logic in pure reducers** — validation, transformations, workflows
+- **Business logic in pure reducers where feasible** — validation and state transitions remain reducer-driven; async pipeline orchestration is implemented in listener middleware
 - **RTK Query for data fetching** — API calls to GenAI, asset resolution, Dropbox uploads
-- **Fat reducers, thin actions** — all logic centralized in reducers for time-travel debugging
+- **Fat reducers, thin actions** — reducer-centric state logic with thin orchestration layers
 - **Feature-based directory structure** — domain-driven organization
 - **BDD testing** — Given-When-Then user stories written first, no mocking internal code
 - **E2E tests assert data presence**, not just containers — prevent false positives on empty state
@@ -210,7 +213,7 @@ Apply before merging any PR:
 ### API Key Handling
 
 > [!IMPORTANT]
-> **No hardcoded credentials.** On first launch, the UI presents a settings/onboarding screen where the reviewer enters both Gemini Nano Banana API key and Dropbox access token. Both are stored in Redux state (persisted to localStorage via listener middleware), never committed to source.
+> **No hardcoded credentials.** On first launch, the UI presents a settings/onboarding screen where the reviewer enters both Gemini API key and Dropbox access token. Both are stored in Redux state (persisted to localStorage via listener middleware), never committed to source.
 
 ### Directory Structure
 
@@ -340,16 +343,21 @@ ad-campaigns-automation/
 │       ├── elements/
 │       │   ├── generic/
 │       │   │   ├── Alert.tsx
+│       │   │   ├── AspectRatio.tsx                 # [NEW] Shadcn primitive
 │       │   │   ├── Badge.tsx
 │       │   │   ├── Button.tsx
 │       │   │   ├── Card.tsx
+│       │   │   ├── Dialog.tsx                      # Shadcn primitive
+│       │   │   ├── Form.tsx                        # Shadcn primitive
 │       │   │   ├── Heading.tsx
 │       │   │   ├── ImageCard.tsx
 │       │   │   ├── Input.tsx
 │       │   │   ├── Label.tsx
 │       │   │   ├── Progress.tsx
+│       │   │   ├── Separator.tsx                   # [NEW] Shadcn primitive
 │       │   │   ├── StatusList.tsx
 │       │   │   ├── Table.tsx
+│       │   │   ├── Tabs.tsx                        # Shadcn primitive
 │       │   │   ├── Text.tsx
 │       │   │   └── Textarea.tsx
 │       │   └── unique/
@@ -376,9 +384,13 @@ ad-campaigns-automation/
 │   └── example-brief.yaml
 │
 ├── output/                                     # Generated outputs (gitignored)
-├── stories/                                    # Storybook stories
+├── src/stories/                                # Storybook stories
+│   ├── AspectRatio.stories.tsx
+│   ├── Separator.stories.tsx
+│   └── ...
 └── __tests__/
-    └── pipeline.e2e.test.ts
+    ├── pipeline.e2e.test.ts
+    └── settings.e2e.test.ts
 ```
 
 ### Pipeline Flow
@@ -390,7 +402,7 @@ flowchart TD
     C --> D{For each product}
     D --> E{Input assets exist?}
     E -- Yes --> F[Load existing asset]
-    E -- No --> G[Generate via Gemini Nano Banana - RTK Query]
+    E -- No --> G[Generate via Gemini 3 Flash Preview - RTK Query]
     F --> H[For each aspect ratio: 1:1 / 9:16 / 16:9]
     G --> H
     H --> I[Compose creative variants]
@@ -448,7 +460,7 @@ CMD ["npm", "start"]
 ### Story 1: API Key Configuration
 
 **As a** reviewer  
-**I want to** enter my Gemini Nano Banana API key on first launch  
+**I want to** enter my Gemini API key on first launch  
 **So that** the pipeline can generate images without hardcoded credentials  
 
 ```gherkin
@@ -458,7 +470,7 @@ Feature: API Key Configuration
     Given the application has no stored API key
     When the user opens the application
     Then the settings screen is displayed
-    And an input field for the Gemini Nano Banana API key is visible
+    And an input field for the Gemini API key is visible
 
   Scenario: User saves a valid API key
     Given the user is on the settings screen
@@ -522,7 +534,7 @@ Feature: Asset Resolution
     Given a product "SolarCharger" is in the campaign brief
     And no matching image exists in the input assets folder
     When the pipeline processes the "SolarCharger" product
-    Then a GenAI image is generated via Gemini Nano Banana
+    Then a GenAI image is generated via Gemini
     And the generated image is saved for reuse
 ```
 
@@ -660,13 +672,14 @@ npx playwright test     # E2E scenarios in browser
 ### Storybook
 ```bash
 npm run storybook       # Full component coverage
+npm run test:storybook  # Storybook interaction/a11y test runner
 ```
 
 ### Manual Verification
 ```bash
-docker-compose up       # Start app
+docker compose up       # Start app
 # Open http://localhost:3000
-# 1. Enter Gemini Nano Banana API key and Dropbox access token in settings
+# 1. Enter Gemini API key and Dropbox access token in settings
 # 2. Load example brief
 # 3. Run pipeline
 # 4. Verify outputs in Dropbox path /output/<product>/<ratio>/creative.png

@@ -1,5 +1,5 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit';
-import type { RootState } from '@/app/store';
+import type { AppDispatch, RootState } from '@/app/store';
 import { apiSlice } from '@/features/core/api/slice/apiSlice';
 import {
   startPipeline,
@@ -23,76 +23,42 @@ import {
 } from '@/features/compliance/slice/complianceActions';
 import { ASPECT_RATIOS } from '@/features/creative/constants/formatAspectRatios';
 import type { Product } from '@/features/brief/types/productType';
+import { buildCreativeVariant, detectDominantColors } from '@/features/pipeline/listeners/pipelineImageUtils';
 
 export const listenerMiddleware = createListenerMiddleware();
 
-const HEX = '0123456789ABCDEF';
-
-const toHex = (value: number): string => {
-  const normalized = Math.max(0, Math.min(255, value));
-  const high = Math.floor(normalized / 16);
-  const low = normalized % 16;
-  return `${HEX[high]}${HEX[low]}`;
+type RequestError = {
+  error?: unknown;
+  data?: unknown;
+  message?: unknown;
 };
 
-const rgbToHex = (r: number, g: number, b: number): string => `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-
-const quantize = (value: number): number => {
-  const bucket = Math.round(value / 32) * 32;
-  return Math.max(0, Math.min(255, bucket));
-};
-
-const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
-  let binary = '';
-  const bytes = new Uint8Array(buffer);
-  for (let idx = 0; idx < bytes.length; idx += 1) {
-    binary += String.fromCharCode(bytes[idx]);
-  }
-  return btoa(binary);
-};
-
-const loadImage = (src: string): Promise<HTMLImageElement> =>
-  new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error('Failed to load image for compliance check'));
-    image.src = src;
-  });
-
-const detectDominantColors = async (imageUrl: string, count = 5): Promise<string[]> => {
-  if (typeof window === 'undefined') {
-    return [];
+const resolveRequestErrorMessage = (value: unknown): string => {
+  if (!value || typeof value !== 'object') {
+    return 'Failed to generate image';
   }
 
-  const image = await loadImage(imageUrl);
-  const canvas = document.createElement('canvas');
-  canvas.width = 64;
-  canvas.height = 64;
-  const context = canvas.getContext('2d');
-  if (!context) {
-    return [];
+  const error = value as RequestError;
+  if (typeof error.error === 'string' && error.error.trim().length > 0) {
+    return error.error;
   }
 
-  context.drawImage(image, 0, 0, canvas.width, canvas.height);
-  const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
-  const colorCounts = new Map<string, number>();
-
-  for (let idx = 0; idx < pixels.length; idx += 4) {
-    if (pixels[idx + 3] === 0) {
-      continue;
+  if (error.data && typeof error.data === 'object') {
+    const nestedErrorMessage = (error.data as { error?: { message?: unknown } }).error?.message;
+    if (typeof nestedErrorMessage === 'string' && nestedErrorMessage.trim().length > 0) {
+      return nestedErrorMessage;
     }
-    const key = rgbToHex(
-      quantize(pixels[idx]),
-      quantize(pixels[idx + 1]),
-      quantize(pixels[idx + 2])
-    );
-    colorCounts.set(key, (colorCounts.get(key) ?? 0) + 1);
   }
 
-  return [...colorCounts.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, count)
-    .map(([color]) => color);
+  if (typeof error.data === 'string' && error.data.trim().length > 0) {
+    return error.data;
+  }
+
+  if (typeof error.message === 'string' && error.message.trim().length > 0) {
+    return error.message;
+  }
+
+  return 'Failed to generate image';
 };
 
 const processProduct = async (
@@ -102,7 +68,7 @@ const processProduct = async (
   originalCampaignMessage: string,
   localizedCampaignMessage: string,
   targetRegion: string,
-  dispatch: (action: unknown) => any,
+  dispatch: AppDispatch,
   getState: () => RootState
 ): Promise<void> => {
   dispatch(setCurrentProduct(product.id));
@@ -115,12 +81,28 @@ const processProduct = async (
     dispatch(resolveAsset({ productId: product.id }));
     dispatch(assetGenerating(product.id));
     const prompt = `${product.name}: ${product.description}`;
-    const generated = await dispatch(
-      apiSlice.endpoints.generateImage.initiate({
-        prompt,
-        apiKey,
-      })
-    ).unwrap();
+    let generated;
+    try {
+      generated = await dispatch(
+        apiSlice.endpoints.generateImage.initiate({
+          prompt,
+          apiKey,
+        })
+      ).unwrap();
+    } catch (err: unknown) {
+      const errorMessage = resolveRequestErrorMessage(err);
+
+      // Mark all creatives for this product as failed
+      ASPECT_RATIOS.forEach((ratio) => {
+        dispatch(
+          creativeFailed({
+            id: `${product.id}_${ratio.ratio}`,
+            error: errorMessage,
+          })
+        );
+      });
+      throw new Error(errorMessage);
+    }
 
     dispatch(
       assetGenerated({
@@ -130,13 +112,6 @@ const processProduct = async (
     );
     sourceImageUrl = `data:image/png;base64,${generated.imageData}`;
   }
-
-  const response = await fetch(sourceImageUrl);
-  if (!response.ok) {
-    throw new Error(`Failed to load source asset for ${product.name}`);
-  }
-  const contentBase64 = arrayBufferToBase64(await response.arrayBuffer());
-  const detectedColors = await detectDominantColors(sourceImageUrl);
 
   const creativeResults = await Promise.all(
     ASPECT_RATIOS.map(async (ratio) => {
@@ -150,10 +125,11 @@ const processProduct = async (
       const outputPath = getCreativeOutputPath(product.name, ratio.name);
 
       try {
+        const composed = await buildCreativeVariant(sourceImageUrl, ratio, localizedCampaignMessage);
         await dispatch(
           apiSlice.endpoints.saveCreativeToDropbox.initiate({
             path: `/${outputPath}`,
-            contentBase64,
+            contentBase64: composed.contentBase64,
             accessToken: dropboxAccessToken,
           })
         ).unwrap();
@@ -163,7 +139,7 @@ const processProduct = async (
             id: creativeId,
             productName: product.name,
             formatName: ratio.name,
-            outputUrl: sourceImageUrl,
+            outputUrl: composed.outputUrl,
             metadata,
           })
         );
@@ -184,6 +160,7 @@ const processProduct = async (
     throw new Error(`All creative uploads failed for ${product.name}`);
   }
 
+  const detectedColors = await detectDominantColors(sourceImageUrl);
   dispatch(checkBrandColors(detectedColors));
   dispatch(checkProhibitedWords(localizedCampaignMessage));
 
@@ -284,7 +261,7 @@ listenerMiddleware.startListening({
           originalCampaignMessage,
           localizedCampaignMessage,
           brief.targetRegion,
-          listenerApi.dispatch as (action: unknown) => any,
+          listenerApi.dispatch as AppDispatch,
           () => listenerApi.getState() as RootState
         );
       } catch (error) {

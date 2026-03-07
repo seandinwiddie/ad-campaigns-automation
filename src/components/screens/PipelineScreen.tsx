@@ -3,6 +3,7 @@
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import {
   selectPipelineStatus,
+  selectPipelineError,
   selectPipelineErrors,
 } from '@/features/pipeline/slice/pipelineSelectors';
 import { setCurrentPage } from '@/features/core/ui/slice/uiActions';
@@ -14,7 +15,11 @@ import { PipelineProgress } from '@/components/elements/unique/PipelineProgress'
 export function PipelineScreen() {
   const dispatch = useAppDispatch();
   const status = useAppSelector(selectPipelineStatus);
+  const fatalError = useAppSelector(selectPipelineError);
   const errors = useAppSelector(selectPipelineErrors);
+  const hasCredentialIssue =
+    typeof fatalError === 'string' &&
+    (fatalError.toLowerCase().includes('api key') || fatalError.toLowerCase().includes('dropbox'));
 
   return (
     <Card className="mx-auto mt-8 max-w-4xl">
@@ -45,6 +50,13 @@ export function PipelineScreen() {
       {status === 'error' && (
         <Alert variant="destructive" className="mt-8">
           <AlertTitle>Pipeline encountered errors.</AlertTitle>
+          {fatalError && (
+            <AlertDescription>
+              <CardDescription className="m-0 mt-2 font-medium text-destructive">
+                Reason: {fatalError}
+              </CardDescription>
+            </AlertDescription>
+          )}
           {errors.length > 0 && (
             <AlertDescription>
               {errors.map((err, i) => (
@@ -54,13 +66,22 @@ export function PipelineScreen() {
               ))}
             </AlertDescription>
           )}
-          <Button
-            variant="outline"
-            onClick={() => dispatch(setCurrentPage('home'))}
-            className="mt-3"
-          >
-            Back to Brief
-          </Button>
+          <div className="mt-3 flex gap-2">
+            {hasCredentialIssue && (
+              <Button
+                variant="default"
+                onClick={() => dispatch(setCurrentPage('settings'))}
+              >
+                Open Settings
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              onClick={() => dispatch(setCurrentPage('home'))}
+            >
+              Back to Brief
+            </Button>
+          </div>
         </Alert>
       )}
     </Card>

@@ -13,7 +13,7 @@ import {
   incrementElapsed,
   resetElapsed,
 } from '@/features/core/ui/slice/uiActions';
-import { startPipeline, pipelineComplete, pipelineError, resetPipeline } from '@/features/pipeline/slice/pipelineActions';
+import { startPipeline, pipelineComplete, resetPipeline } from '@/features/pipeline/slice/pipelineActions';
 
 const API_KEY_STORAGE_KEY = 'ad-campaigns-api-key';
 const DROPBOX_TOKEN_STORAGE_KEY = 'ad-campaigns-dropbox-token';

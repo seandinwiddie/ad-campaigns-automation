@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { Asset } from '../types/assetType';
 import type { AssetsState } from '../types/assetsStateType';
 
 const initialState: AssetsState = {
