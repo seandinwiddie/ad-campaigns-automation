@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import settingsReducer from '../slice/settingsSlice';
-import { setApiKey, clearApiKey } from '../slice/settingsActions';
-import { selectApiKey, selectHasApiKey } from '../slice/settingsSelectors';
+import { setApiKey, clearApiKey, setOpenAiApiKey, clearOpenAiApiKey } from '../slice/settingsActions';
+import { selectApiKey, selectHasAnyAiApiKey, selectHasApiKey, selectHasOpenAiApiKey, selectOpenAiApiKey } from '../slice/settingsSelectors';
 import type { SettingsState } from '../types/settingsStateType';
 
 function createTestStore(preloadedState?: { settings: SettingsState }) {
@@ -12,51 +12,62 @@ function createTestStore(preloadedState?: { settings: SettingsState }) {
 }
 
 describe('Story 1: API Key Configuration', () => {
-  describe('Given no stored API key', () => {
-    it('Then selectHasApiKey returns false', () => {
+  describe('Given no stored API keys', () => {
+    it('Then AI key selectors return false/null', () => {
       const store = createTestStore();
       const state = store.getState();
-      expect(selectHasApiKey({ settings: state.settings } as any)).toBe(false);
-    });
+      const rootState = { settings: state.settings } as any;
 
-    it('Then selectApiKey returns null', () => {
-      const store = createTestStore();
-      const state = store.getState();
-      expect(selectApiKey({ settings: state.settings } as any)).toBeNull();
+      expect(selectApiKey(rootState)).toBeNull();
+      expect(selectOpenAiApiKey(rootState)).toBeNull();
+      expect(selectHasApiKey(rootState)).toBe(false);
+      expect(selectHasOpenAiApiKey(rootState)).toBe(false);
+      expect(selectHasAnyAiApiKey(rootState)).toBe(false);
     });
   });
 
   describe('When setApiKey is dispatched', () => {
-    it('Then selectApiKey returns the key', () => {
+    it('Then Gemini selectors reflect configured state', () => {
       const store = createTestStore();
-      store.dispatch(setApiKey('sk-test-key-12345'));
+      store.dispatch(setApiKey('gemini-test-key-12345'));
       const state = store.getState();
-      expect(selectApiKey({ settings: state.settings } as any)).toBe('sk-test-key-12345');
-    });
+      const rootState = { settings: state.settings } as any;
 
-    it('Then selectHasApiKey returns true', () => {
-      const store = createTestStore();
-      store.dispatch(setApiKey('sk-test-key-12345'));
-      const state = store.getState();
-      expect(selectHasApiKey({ settings: state.settings } as any)).toBe(true);
+      expect(selectApiKey(rootState)).toBe('gemini-test-key-12345');
+      expect(selectHasApiKey(rootState)).toBe(true);
+      expect(selectHasAnyAiApiKey(rootState)).toBe(true);
     });
   });
 
-  describe('When clearApiKey is dispatched', () => {
-    it('Then selectApiKey returns null', () => {
+  describe('When setOpenAiApiKey is dispatched', () => {
+    it('Then OpenAI selectors reflect configured state', () => {
       const store = createTestStore();
-      store.dispatch(setApiKey('sk-test-key-12345'));
-      store.dispatch(clearApiKey());
+      store.dispatch(setOpenAiApiKey('openai-test-key-12345'));
       const state = store.getState();
-      expect(selectApiKey({ settings: state.settings } as any)).toBeNull();
-    });
+      const rootState = { settings: state.settings } as any;
 
-    it('Then selectHasApiKey returns false', () => {
+      expect(selectOpenAiApiKey(rootState)).toBe('openai-test-key-12345');
+      expect(selectHasOpenAiApiKey(rootState)).toBe(true);
+      expect(selectHasAnyAiApiKey(rootState)).toBe(true);
+    });
+  });
+
+  describe('When AI keys are cleared', () => {
+    it('Then selectors return empty state', () => {
       const store = createTestStore();
-      store.dispatch(setApiKey('sk-test-key-12345'));
+      store.dispatch(setApiKey('gemini-test-key-12345'));
+      store.dispatch(setOpenAiApiKey('openai-test-key-12345'));
       store.dispatch(clearApiKey());
+      store.dispatch(clearOpenAiApiKey());
+
       const state = store.getState();
-      expect(selectHasApiKey({ settings: state.settings } as any)).toBe(false);
+      const rootState = { settings: state.settings } as any;
+
+      expect(selectApiKey(rootState)).toBeNull();
+      expect(selectOpenAiApiKey(rootState)).toBeNull();
+      expect(selectHasApiKey(rootState)).toBe(false);
+      expect(selectHasOpenAiApiKey(rootState)).toBe(false);
+      expect(selectHasAnyAiApiKey(rootState)).toBe(false);
     });
   });
 });

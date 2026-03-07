@@ -1,6 +1,6 @@
 # Creative Automation Pipeline
 
-> **Status Update (March 7, 2026):** Credential validation/error messaging is explicit, and current automated checks are green (`npm test`, `npm run lint`, `npm run build`, Playwright E2E). Pipeline composes aspect-ratio creatives with text overlay before Dropbox upload. Storybook test-runner verification remains manual in this repo.
+> **Status Update (March 7, 2026):** App runs without any API keys — Pollinations.ai provides a free, keyless fallback. Image generation uses a three-tier fallback chain: Gemini → OpenAI (DALL-E 3, then DALL-E 2) → Pollinations.ai (free, no key). Credential gating removed; all users land on Home and can validate briefs and run the pipeline immediately. Current automated checks are green (`npm test`, `npm run lint`, `npm run build`, Playwright E2E). Pipeline composes aspect-ratio creatives with text overlay before optional Dropbox upload or Results download fallback. Storybook test-runner verification remains manual in this repo.
 
 ## Hard Constraints
 
@@ -52,8 +52,8 @@ Built for global consumer goods teams launching hundreds of localized campaigns 
 | **Framework** | Next.js (App Router) | Modern React framework for local web UI (single-page App Router entry) |
 | **Language** | TypeScript | Type safety, FP-aligned, JD requirement |
 | **State Management** | Redux Toolkit (RTK) + RTK Query | FP maintenance strategy standard; all business logic in pure reducers |
-| **GenAI API** | Gemini 3 Flash Preview | User-specified; API key entered via UI on first use (not hardcoded) |
-| **Storage** | Dropbox Files API via RTK Query | Cloud output persistence with deterministic folder paths |
+| **GenAI API** | Gemini + OpenAI + Pollinations | Gemini primary; OpenAI (DALL-E 3, then DALL-E 2) on any Gemini failure; Pollinations.ai free fallback when both fail (no API key) |
+| **Storage** | Dropbox Files API via RTK Query + Results download fallback | Optional cloud persistence with deterministic folder paths; pipeline still completes when Dropbox is missing or invalid |
 | **Image Processing** | node-canvas | Text overlay, compositing; may be swapped later |
 | **Image Resize/Crop** | Sharp | Fast aspect ratio resizing |
 | **Brief Parsing** | `js-yaml` + JSON | Support both formats |
@@ -99,6 +99,7 @@ Built for global consumer goods teams launching hundreds of localized campaigns 
 - **BDD testing** — Given-When-Then user stories written first, no mocking internal code
 - **E2E tests assert data presence**, not just containers — prevent false positives on empty state
 - **Full Storybook coverage** for all UI components
+- **Tests and Storybook fixtures derive labels from passed data** — sample/demo content may use concrete example names, but automated tests and stories must not depend on fixed product-name literals in assertions or fixture plumbing
 - **One Function Per File** — limit functions per file to enforce single responsibility and modularity
 
 ### Component Composition Hierarchy
@@ -213,7 +214,7 @@ Apply before merging any PR:
 ### API Key Handling
 
 > [!IMPORTANT]
-> **No hardcoded credentials.** On first launch, the UI presents a settings/onboarding screen where the reviewer enters both Gemini API key and Dropbox access token. Both are stored in Redux state (persisted to localStorage via listener middleware), never committed to source.
+> **No hardcoded credentials. No keys required.** The app runs fully without any API keys — Pollinations.ai provides free, keyless image generation. On first launch, users land on Home and can validate briefs and run the pipeline immediately. If keys are configured (via Settings or `.env.local` bootstrap), the pipeline prefers Gemini → OpenAI (DALL-E 3 → DALL-E 2) → Pollinations.ai. Keys are stored in Redux state (persisted to localStorage via listener middleware), never committed to source.
 
 ### Directory Structure
 
@@ -397,21 +398,23 @@ ad-campaigns-automation/
 
 ```mermaid
 flowchart TD
-    A[User enters API key on first use] --> B[User uploads/creates campaign brief]
+    A[User opens app; optional: enter keys in Settings] --> B[User uploads/creates campaign brief]
     B --> C[Brief validated via briefSlice reducers]
     C --> D{For each product}
     D --> E{Input assets exist?}
     E -- Yes --> F[Load existing asset]
-    E -- No --> G[Generate via Gemini 3 Flash Preview - RTK Query]
+    E -- No --> G[Generate via Gemini → OpenAI DALL-E 3/2 → Pollinations (free, no key)]
     F --> H[For each aspect ratio: 1:1 / 9:16 / 16:9]
     G --> H
     H --> I[Compose creative variants]
     I --> J[Run compliance checks - bonus]
-    J --> K[Upload via RTK Query to Dropbox Files API]
-    K --> L[Persist to /output/product/ratio/creative.png]
-    L --> M[Update pipelineSlice state]
-    M --> D
-    D -- Done --> N[Display results in OutputGallery]
+    J --> K{Dropbox configured and upload succeeds?}
+    K -- Yes --> L[Persist to Dropbox path /output/product/ratio/creative.png]
+    K -- No --> M[Keep creative downloadable in Results]
+    L --> N[Update pipelineSlice state]
+    M --> N
+    N --> D
+    D -- Done --> O[Display results in OutputGallery]
 ```
 
 ---
@@ -460,17 +463,24 @@ CMD ["npm", "start"]
 ### Story 1: API Key Configuration
 
 **As a** reviewer  
-**I want to** enter my Gemini API key on first launch  
+**I want to** enter one AI key on first launch (Gemini primary when present, OpenAI-only allowed)  
 **So that** the pipeline can generate images without hardcoded credentials  
 
 ```gherkin
 Feature: API Key Configuration
 
-  Scenario: First-time user sees API key prompt
+  Scenario: First-time user can run pipeline without keys
     Given the application has no stored API key
     When the user opens the application
-    Then the settings screen is displayed
-    And an input field for the Gemini API key is visible
+    Then the user lands on Home
+    And the user can validate a brief and run the pipeline (Pollinations free fallback)
+    And Settings exposes inputs for optional Gemini and OpenAI keys
+
+  Scenario: User runs with OpenAI only
+    Given the user has entered an OpenAI API key
+    And no Gemini API key is configured
+    When the user validates the brief and starts the pipeline
+    Then the pipeline runs successfully
 
   Scenario: User saves a valid API key
     Given the user is on the settings screen
@@ -478,11 +488,12 @@ Feature: API Key Configuration
     And the user clicks save
     Then the API key is persisted to localStorage
     And the user is redirected to the campaign brief page
+    And the "Set Keys" call-to-action returns to normal "Settings"
 
-  Scenario: Returning user has stored API key
-    Given the application has a stored API key
+  Scenario: User with stored credentials lands on Home
+    Given the application has stored API keys or Dropbox token
     When the user opens the application
-    Then the user is taken directly to the campaign brief page
+    Then the user lands on Home (same as no-keys flow)
 ```
 
 ### Story 2: Campaign Brief Input
@@ -535,6 +546,8 @@ Feature: Asset Resolution
     And no matching image exists in the input assets folder
     When the pipeline processes the "SolarCharger" product
     Then a GenAI image is generated via Gemini
+    And if Gemini fails, generation falls back to OpenAI (DALL-E 3, then DALL-E 2)
+    And if both fail, generation falls back to Pollinations.ai (free, no API key)
     And the generated image is saved for reuse
 ```
 
@@ -569,14 +582,21 @@ Feature: Multi-Format Creative Generation
 ```gherkin
 Feature: Organized Output
 
-  Scenario: Outputs are organized by product and aspect ratio
+  Scenario: Outputs are organized by product and aspect ratio when Dropbox is configured
     Given the pipeline has completed for products "EcoBottle" and "SolarCharger"
-    Then the output folder contains "ecobottle/1x1/"
-    And the output folder contains "ecobottle/9x16/"
-    And the output folder contains "ecobottle/16x9/"
-    And the output folder contains "solarcharger/1x1/"
-    And the output folder contains "solarcharger/9x16/"
-    And the output folder contains "solarcharger/16x9/"
+    And Dropbox upload is configured
+    Then the Dropbox output path contains "ecobottle/1x1/"
+    And the Dropbox output path contains "ecobottle/9x16/"
+    And the Dropbox output path contains "ecobottle/16x9/"
+    And the Dropbox output path contains "solarcharger/1x1/"
+    And the Dropbox output path contains "solarcharger/9x16/"
+    And the Dropbox output path contains "solarcharger/16x9/"
+
+  Scenario: Outputs remain usable when Dropbox is unavailable
+    Given the pipeline has completed for products "EcoBottle" and "SolarCharger"
+    And Dropbox upload is unavailable
+    Then the Results screen shows a download fallback warning
+    And each completed creative exposes a "Download PNG" action
 ```
 
 ### Story 6: Pipeline Execution & Progress (UI)
@@ -639,7 +659,7 @@ Feature: Error Handling
     Given the user has entered an invalid API key
     When the pipeline attempts to generate an image
     Then an authentication error is displayed
-    And the user is prompted to update the API key in settings
+    And the user is prompted to update AI credentials in settings
 ```
 
 ### Story 9: Multi-Language Localization
@@ -679,10 +699,11 @@ npm run test:storybook  # Storybook interaction/a11y test runner
 ```bash
 docker compose up       # Start app
 # Open http://localhost:3000
-# 1. Enter Gemini API key and Dropbox access token in settings
-# 2. Load example brief
-# 3. Run pipeline
-# 4. Verify outputs in Dropbox path /output/<product>/<ratio>/creative.png
+# 1. No keys required — load example brief, validate, run pipeline (uses Pollinations free fallback)
+# 2. Optionally enter Gemini/OpenAI keys in Settings for faster/ richer generation
+# 3. Optionally enter Dropbox token for cloud upload
+# 4. If Dropbox is configured, verify outputs in Dropbox path /output/<product>/<ratio>/creative.png
+#    Otherwise verify the Results screen exposes Download PNG actions
 ```
 
 ### Demo Recording

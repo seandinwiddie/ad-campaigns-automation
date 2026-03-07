@@ -13,13 +13,21 @@ function createTestStore(preloadedState?: { brief: BriefState }) {
   });
 }
 
+const makeProduct = (id: string, description: string, name = `product-${id}`) => ({
+  id,
+  name,
+  description,
+});
+
+const makeProducts = () => ([
+  makeProduct('p1', 'Reusable water bottle'),
+  makeProduct('p2', 'Reusable shopping bag'),
+]);
+
 function makeValidBrief(overrides: Partial<CampaignBrief> = {}): CampaignBrief {
   return {
     campaignName: 'Summer Campaign',
-    products: [
-      { id: 'p1', name: 'EcoBottle', description: 'Reusable water bottle' },
-      { id: 'p2', name: 'EcoBag', description: 'Reusable shopping bag' },
-    ],
+    products: makeProducts(),
     targetRegion: 'US',
     targetAudience: 'Eco-conscious millennials',
     campaignMessage: 'Go green with our products',
@@ -42,18 +50,19 @@ describe('Story 2: Campaign Brief Input', () => {
   describe('Given valid YAML brief', () => {
     it('Then loadBrief succeeds', async () => {
       const store = createTestStore();
+      const brief = makeValidBrief();
       const yamlInput = `
-campaignName: Summer Campaign
+campaignName: ${brief.campaignName}
 products:
-  - id: p1
-    name: EcoBottle
-    description: Reusable water bottle
-  - id: p2
-    name: EcoBag
-    description: Reusable shopping bag
-targetRegion: US
-targetAudience: Eco-conscious millennials
-campaignMessage: Go green with our products
+  - id: ${brief.products[0].id}
+    name: ${brief.products[0].name}
+    description: ${brief.products[0].description}
+  - id: ${brief.products[1].id}
+    name: ${brief.products[1].name}
+    description: ${brief.products[1].description}
+targetRegion: ${brief.targetRegion}
+targetAudience: ${brief.targetAudience}
+campaignMessage: ${brief.campaignMessage}
 `;
       await store.dispatch(loadBrief(yamlInput));
       const state = store.getState();
@@ -82,7 +91,7 @@ campaignMessage: Go green with our products
     it('Then validation fails with products error', async () => {
       const store = createTestStore();
       const brief = makeValidBrief({
-        products: [{ id: 'p1', name: 'EcoBottle', description: 'Bottle' }],
+        products: [makeProduct('p1', 'Bottle')],
       });
       await store.dispatch(loadBrief(JSON.stringify(brief)));
       const state = store.getState();

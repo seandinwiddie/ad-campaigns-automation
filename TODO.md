@@ -8,6 +8,22 @@
 - [/] **Keep all business logic in pure reducers inside `*Slice.ts` files**
 - [/] Non-slice files may exist only as thin, logic-free adapters/wiring when unavoidable
 
+## Fallback Update (Gemini -> OpenAI -> Pollinations)
+
+- [x] Add OpenAI API key to `settingsSlice` + selectors + persistence
+- [x] Add OpenAI API key input to `uiSlice` + settings screen
+- [x] Add OpenAI API key validation mutation in `apiSlice`
+- [x] Add automatic OpenAI fallback in `apiSlice` when Gemini fails (any error, not just high demand)
+- [x] Add DALL-E 2 as second OpenAI fallback when DALL-E 3 fails
+- [x] Add Pollinations.ai as free third fallback (no API key) when Gemini and OpenAI both fail
+- [x] Allow pipeline to run with no API keys (Pollinations fallback); treat Dropbox as optional with Results download fallback
+- [x] Support OpenAI-only runs with no Gemini key present
+- [x] Bootstrap Settings from `.env.local` credentials when localStorage is empty
+- [x] Remove credential gating — app works with no keys via Pollinations free fallback; all users land on Home
+- [x] Update Jest + Playwright + Storybook fixtures for fallback flow
+- [x] Update `README.md`, `PLAN.MD`, and `TESTS.md` docs for fallback behavior
+- [x] Make automated tests and Storybook fixtures derive labels/assertions from passed fixture data instead of fixed product-name literals
+
 ---
 
 ## Phase 0: BDD Test Harness
@@ -92,13 +108,13 @@
 - [x] **`store.ts`** — `configureStore` with RTK Query middleware, redux-logger
 - [x] **`rootReducer.ts`** — centralized reducer composition for app state
 - [x] **Typed hooks** — `useAppDispatch`, `useAppSelector` in `src/app/hooks.ts`
-- [x] **`apiSlice.ts`** — RTK Query base API slice (Gemini base URL)
-- [x] **`settingsSlice.ts`** — API key state + persistence listener middleware (localStorage)
-  - [x] Reducers: `setApiKey`, `clearApiKey`, `setDropboxAccessToken`, `clearDropboxAccessToken`
-  - [x] **`settingsSelectors.ts`** — `selectApiKey`, `selectHasApiKey`, `selectDropboxAccessToken`, `selectHasDropboxAccessToken`
+- [x] **`apiSlice.ts`** — RTK Query base API slice (Gemini primary; OpenAI DALL-E 3/2 fallback; Pollinations.ai free fallback)
+- [x] **`settingsSlice.ts`** — AI key state + persistence listener middleware (localStorage)
+  - [x] Reducers: `setApiKey`, `clearApiKey`, `setOpenAiApiKey`, `clearOpenAiApiKey`, `setDropboxAccessToken`, `clearDropboxAccessToken`
+  - [x] **`settingsSelectors.ts`** — `selectApiKey`, `selectOpenAiApiKey`, `selectHasAnyAiApiKey`, `selectDropboxAccessToken`, `selectHasDropboxAccessToken`
 - [x] **`uiSlice.ts`** — modals, nav, loading states
   - [x] Reducer: `setLoading`, `setActiveModal`, `setCurrentPage`
-  - [x] **`uiSelectors.ts`** — `selectIsLoading`, `selectActiveModal`, `selectCurrentPage`, `selectBriefRawText`, `selectApiKeyInput`, `selectDropboxAccessTokenInput`, `selectElapsedSeconds`
+  - [x] **`uiSelectors.ts`** — `selectIsLoading`, `selectActiveModal`, `selectCurrentPage`, `selectBriefRawText`, `selectApiKeyInput`, `selectOpenAiApiKeyInput`, `selectDropboxAccessTokenInput`, `selectElapsedSeconds`
 - [x] Verify: all tests from Phase 0 Story 1 pass
 
 ---
@@ -172,9 +188,10 @@
 ---
 
 ## Phase 7: Output Organization
-> Save creatives to structured Dropbox paths: `/output/<product>/<ratio>/creative.png`
+> Save creatives to structured Dropbox paths when configured, otherwise keep them downloadable from Results.
 
 - [x] Implement output save orchestration via RTK Query Dropbox upload mutation in pipeline listener
+- [x] Fall back to local download mode when Dropbox is missing or upload fails
 - [x] Organize: `output/ecobottle/1x1/`, `output/ecobottle/9x16/`, etc.
 - [x] **E2E test** — BDD scenarios from Story 5
 - [x] Verify: all Story 5 tests pass
@@ -229,7 +246,7 @@
   - [x] `ComplianceReport.tsx` — Table + Badge (reads from complianceSlice)
 - [x] **Screens** (`src/components/screens/`) — composed of generic + unique:
   - [x] `ScreenRouter.tsx` — reads `uiSlice.currentPage`, renders correct screen
-  - [x] `SettingsScreen.tsx` — Label + Input + Button (Gemini API key + Dropbox access token entry)
+  - [x] `SettingsScreen.tsx` — Label + Input + Button (Gemini key + optional OpenAI fallback key + Dropbox token entry)
   - [x] `HomeScreen.tsx` — Heading + Text + BriefEditor + Button
   - [x] `PipelineScreen.tsx` — Heading + PipelineProgress + Alert + Button
   - [x] `ResultsScreen.tsx` — Heading + Card (metrics) + OutputGallery + ComplianceReport + Button
@@ -237,7 +254,7 @@
 - [x] **Root layout** (`layout.tsx`) — wraps with StoreProvider
 - [x] **Single page** (`page.tsx`) — renders `<ScreenRouter />`
 - [x] Storybook stories for all components in `stories/`
-- [/] Verify: Storybook coverage (`npm run storybook`, `npm run test:storybook`)
+- [x] Verify: Storybook coverage (`npm run storybook`, `npm run test:storybook`)
 - [x] **UX Overhaul (Phase 2)**:
   - [x] Unified "raw shadcn" component usage
   - [x] Flattened layout (removed card-in-card nesting)
@@ -267,10 +284,10 @@
   - [x] Assumptions and limitations
   - [x] Success metrics explanation
 - [x] **Record 2–3 min demo video** (Walkthrough artifact created):
-  - [x] Settings → enter API key + Dropbox access token
+  - [x] Settings → enter one AI key and optionally a Dropbox token
   - [x] Upload campaign brief
   - [x] Pipeline execution with progress
-  - [x] Output gallery + folder structure
+  - [x] Output gallery + Dropbox/download fallback path
   - [x] Success metrics display
 
 ---
@@ -291,3 +308,7 @@
 - [x] Screens composed of generic + unique elements only
 - [x] Unique elements composed of generic elements only
 - [x] Generic elements sourced exclusively from shadcn/ui or VengeanceUI
+## Post-MVP
+
+- [ ] Refactor `apiSlice` and pipeline listener to use a unified abstraction (e.g., LangChain or other) to support plug-and-play for any provider (Firefly, etc.)
+- [x] Multi-provider image fallback chain: Gemini → OpenAI (DALL-E 3, DALL-E 2) → Pollinations.ai (free)

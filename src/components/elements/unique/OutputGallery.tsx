@@ -11,6 +11,16 @@ const FORMAT_RATIOS: Record<string, number> = {
   '16:9': 16 / 9,
 };
 
+const downloadCreative = (url: string, path?: string): void => {
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = path?.split('/').pop() || 'creative.png';
+  anchor.rel = 'noopener';
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+};
+
 export function OutputGallery() {
   const creatives = useAppSelector(selectAllCreatives);
   const entries = Object.values(creatives);
@@ -76,17 +86,39 @@ export function OutputGallery() {
                 <div className="flex items-center justify-between px-1">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wide opacity-80">{creative.aspectRatio}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase">Social Format</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-[10px] text-muted-foreground uppercase">Social Format</p>
+                      {creative.storageMode === 'download' && (
+                        <Badge variant="secondary" className="text-[9px] uppercase tracking-wide">
+                          Download Only
+                        </Badge>
+                      )}
+                    </div>
+                    {creative.storageError && (
+                      <p className="mt-1 max-w-[180px] text-[10px] leading-tight text-amber-700">
+                        {creative.storageError}
+                      </p>
+                    )}
                   </div>
                   {creative.outputUrl && (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="h-7 px-3 text-[10px] uppercase font-bold"
-                      onClick={() => window.open(creative.outputUrl, '_blank', 'noopener,noreferrer')}
-                    >
-                      View Full
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="h-7 px-3 text-[10px] uppercase font-bold"
+                        onClick={() => downloadCreative(creative.outputUrl!, creative.outputPath)}
+                      >
+                        Download PNG
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 px-3 text-[10px] uppercase font-bold"
+                        onClick={() => window.open(creative.outputUrl, '_blank', 'noopener,noreferrer')}
+                      >
+                        View Full
+                      </Button>
+                    </div>
                   )}
                 </div>
               </div>

@@ -5,6 +5,7 @@ import {
   setBriefRawText,
   loadExampleBriefText,
   setApiKeyInput,
+  setOpenAiApiKeyInput,
   incrementElapsed,
   resetElapsed,
 } from '../slice/uiActions';
@@ -12,6 +13,7 @@ import {
   selectCurrentPage,
   selectBriefRawText,
   selectApiKeyInput,
+  selectOpenAiApiKeyInput,
   selectElapsedSeconds,
 } from '../slice/uiSelectors';
 
@@ -65,6 +67,15 @@ describe('Story 0: UI State and SPA Routing', () => {
       store.dispatch(setApiKeyInput('sk-test-key'));
       const state = store.getState();
       expect(selectApiKeyInput({ ui: state.ui } as any)).toBe('sk-test-key');
+    });
+  });
+
+  describe('When setOpenAiApiKeyInput is dispatched', () => {
+    it('Then OpenAI key form input is tracked in Redux', () => {
+      const store = createTestStore();
+      store.dispatch(setOpenAiApiKeyInput('openai-test-key'));
+      const state = store.getState();
+      expect(selectOpenAiApiKeyInput({ ui: state.ui } as any)).toBe('openai-test-key');
     });
   });
 

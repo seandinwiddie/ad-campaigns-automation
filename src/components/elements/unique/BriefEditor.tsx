@@ -16,7 +16,6 @@ export function BriefEditor() {
   const products = useAppSelector(selectProducts);
   const validationErrors = useAppSelector(selectValidationErrors);
   const isBriefValid = useAppSelector(selectIsBriefValid);
-
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2">

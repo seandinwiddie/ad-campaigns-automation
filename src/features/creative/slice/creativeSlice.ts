@@ -62,6 +62,8 @@ export const creativeSlice = createSlice({
         productName: string;
         formatName: string;
         outputUrl: string;
+        storageMode?: 'dropbox' | 'download';
+        storageError?: string;
         metadata: {
           originalCampaignMessage: string;
           localizedCampaignMessage: string;
@@ -70,7 +72,15 @@ export const creativeSlice = createSlice({
         };
       }>
     ) {
-      const { id, productName, formatName, outputUrl, metadata } = action.payload;
+      const {
+        id,
+        productName,
+        formatName,
+        outputUrl,
+        storageMode = 'dropbox',
+        storageError,
+        metadata,
+      } = action.payload;
       if (!state.creatives[id]) {
         return;
       }
@@ -78,6 +88,8 @@ export const creativeSlice = createSlice({
       state.creatives[id].status = 'completed';
       state.creatives[id].outputUrl = outputUrl;
       state.creatives[id].outputPath = getCreativeOutputPath(productName, formatName);
+      state.creatives[id].storageMode = storageMode;
+      state.creatives[id].storageError = storageError;
       state.creatives[id].metadata = metadata;
       state.completedCount += 1;
       recalculateProgress(state);

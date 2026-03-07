@@ -46,16 +46,25 @@ export default meta;
 type Story = StoryObj<{ mockState: any }>;
 
 export const Default: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story: 'All keys optional. Pollinations.ai provides free image generation when no keys are set.',
+            },
+        },
+    },
     args: {
         mockState: {
             ui: {
                 currentPage: 'settings',
                 apiKeyInput: '',
+                openAiApiKeyInput: '',
                 dropboxAccessTokenInput: '',
-                pipelineElapsedTimeSeconds: 0,
+                elapsedSeconds: 0,
             },
             settings: {
                 apiKey: '',
+                openAiApiKey: '',
                 dropboxAccessToken: '',
             },
         },
@@ -68,11 +77,13 @@ export const WithInputs: Story = {
             ui: {
                 currentPage: 'settings',
                 apiKeyInput: 'mock-gemini-key',
+                openAiApiKeyInput: 'mock-openai-key',
                 dropboxAccessTokenInput: 'mock-dropbox-token',
-                pipelineElapsedTimeSeconds: 0,
+                elapsedSeconds: 0,
             },
             settings: {
                 apiKey: '',
+                openAiApiKey: '',
                 dropboxAccessToken: '',
             },
         },

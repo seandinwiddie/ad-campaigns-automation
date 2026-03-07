@@ -1,3 +1,4 @@
+import * as React from 'react';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -16,8 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.className}>
-      <body className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+    <html lang="en" className={inter.className} suppressHydrationWarning>
+      <body className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100" suppressHydrationWarning>
         <StoreProvider>{children}</StoreProvider>
       </body>
     </html>

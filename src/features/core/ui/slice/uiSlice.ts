@@ -29,6 +29,8 @@ const initialState: UiState = {
   currentPage: 'settings',
   briefRawText: '',
   apiKeyInput: '',
+  openAiApiKeyInput: '',
+  pollinationsApiKeyInput: '',
   dropboxAccessTokenInput: '',
   elapsedSeconds: 0,
 };
@@ -54,6 +56,12 @@ export const uiSlice = createSlice({
     },
     setApiKeyInput: (state, action: PayloadAction<string>) => {
       state.apiKeyInput = action.payload;
+    },
+    setOpenAiApiKeyInput: (state, action: PayloadAction<string>) => {
+      state.openAiApiKeyInput = action.payload;
+    },
+    setPollinationsApiKeyInput: (state, action: PayloadAction<string>) => {
+      state.pollinationsApiKeyInput = action.payload;
     },
     setDropboxAccessTokenInput: (state, action: PayloadAction<string>) => {
       state.dropboxAccessTokenInput = action.payload;

@@ -7,6 +7,8 @@ export const {
   setBriefRawText,
   loadExampleBriefText,
   setApiKeyInput,
+  setOpenAiApiKeyInput,
+  setPollinationsApiKeyInput,
   setDropboxAccessTokenInput,
   setElapsedSeconds,
   incrementElapsed,

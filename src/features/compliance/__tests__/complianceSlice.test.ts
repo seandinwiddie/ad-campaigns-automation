@@ -39,7 +39,7 @@ describe('Story 7: Brand Compliance', () => {
     it('Then checkProhibitedWords flags matches in message', () => {
       const store = createTestStore();
       store.dispatch(setProhibitedWords(['free', 'guaranteed']));
-      store.dispatch(checkProhibitedWords('Get your free EcoBottle'));
+      store.dispatch(checkProhibitedWords('Get your free product today'));
       const state = store.getState();
       const issues = selectComplianceIssues({ compliance: state.compliance } as any);
       expect(issues).toHaveLength(1);
@@ -47,10 +47,10 @@ describe('Story 7: Brand Compliance', () => {
       expect(issues[0].detail).toContain('free');
     });
 
-    it('Then "Get your free EcoBottle" with prohibited words ["free"] flags "free"', () => {
+    it('Then a prohibited word in the message is flagged', () => {
       const store = createTestStore();
       store.dispatch(setProhibitedWords(['free']));
-      store.dispatch(checkProhibitedWords('Get your free EcoBottle'));
+      store.dispatch(checkProhibitedWords('Get your free product today'));
       const state = store.getState();
       const issues = selectComplianceIssues({ compliance: state.compliance } as any);
       expect(issues).toHaveLength(1);
@@ -61,7 +61,7 @@ describe('Story 7: Brand Compliance', () => {
     it('Then reports no issues when message has no prohibited words', () => {
       const store = createTestStore();
       store.dispatch(setProhibitedWords(['free', 'guaranteed']));
-      store.dispatch(checkProhibitedWords('Buy our EcoBottle today'));
+      store.dispatch(checkProhibitedWords('Buy our featured product today'));
       const state = store.getState();
       expect(selectIsCompliant({ compliance: state.compliance } as any)).toBe(true);
     });

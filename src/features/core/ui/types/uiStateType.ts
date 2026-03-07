@@ -6,6 +6,8 @@ export interface UiState {
   currentPage: AppPage;
   briefRawText: string;
   apiKeyInput: string;
+  openAiApiKeyInput: string;
+  pollinationsApiKeyInput: string;
   dropboxAccessTokenInput: string;
   elapsedSeconds: number;
 }

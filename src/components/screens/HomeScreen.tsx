@@ -14,7 +14,6 @@ export function HomeScreen() {
   const dispatch = useAppDispatch();
   const isBriefValid = useAppSelector(selectIsBriefValid);
   const products = useAppSelector(selectProducts);
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -35,7 +34,7 @@ export function HomeScreen() {
               variant="ghost"
               size="sm"
               onClick={() => dispatch(setCurrentPage('settings'))}
-              className="text-muted-foreground hover:text-primary transition-colors"
+              className="text-foreground/80 hover:text-primary transition-colors"
             >
               Settings
             </Button>

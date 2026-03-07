@@ -1,8 +1,28 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Settings API Configurations', () => {
-    test.beforeEach(async ({ page }) => {
+    test('Given no credentials, Then user lands on Home on first load', async ({ page }) => {
+        await page.addInitScript(() => {
+            window.localStorage.setItem('ad-campaigns-api-key', '');
+            window.localStorage.setItem('ad-campaigns-openai-api-key', '');
+            window.localStorage.setItem('ad-campaigns-pollinations-api-key', '');
+            window.localStorage.setItem('ad-campaigns-dropbox-token', '');
+        });
         await page.goto('/');
+        await expect(page.getByText('Creative Automation', { exact: true }).first()).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Settings' })).toBeVisible();
+    });
+
+    test.beforeEach(async ({ page }) => {
+        await page.addInitScript(() => {
+            window.localStorage.setItem('ad-campaigns-api-key', '');
+            window.localStorage.setItem('ad-campaigns-openai-api-key', '');
+            window.localStorage.setItem('ad-campaigns-pollinations-api-key', '');
+            window.localStorage.setItem('ad-campaigns-dropbox-token', '');
+        });
+        await page.goto('/');
+        // With no credentials, user lands on Home; click Settings to reach System Credentials
+        await page.getByRole('button', { name: 'Settings' }).click();
         await expect(page.getByText('System Credentials')).toBeVisible();
     });
 
@@ -44,6 +64,43 @@ test.describe('Settings API Configurations', () => {
         await geminiTestBtn.click();
 
         await expect(page.getByText(`✗ Connection failed. Reason: ${errorMessage}`)).toBeVisible();
+    });
+
+    test('Valid OpenAI API Key', async ({ page }) => {
+        await page.route('https://api.openai.com/v1/models', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ data: [] }),
+            });
+        });
+
+        const openAiInput = page.getByLabel('OpenAI API Key (Fallback)');
+        await openAiInput.fill('valid-openai-key');
+
+        const openAiTestBtn = page.locator('div').filter({ hasText: /^OpenAI API Key \(Fallback\)/ }).getByRole('button', { name: 'Test' }).first();
+        await openAiTestBtn.click();
+
+        await expect(page.getByText('✓ OpenAI connection successful')).toBeVisible();
+    });
+
+    test('Invalid OpenAI API Key', async ({ page }) => {
+        const errorMessage = 'Invalid authentication credentials';
+        await page.route('https://api.openai.com/v1/models', async (route) => {
+            await route.fulfill({
+                status: 401,
+                contentType: 'application/json',
+                body: JSON.stringify({ error: { message: errorMessage } }),
+            });
+        });
+
+        const openAiInput = page.getByLabel('OpenAI API Key (Fallback)');
+        await openAiInput.fill('invalid-openai-key');
+
+        const openAiTestBtn = page.locator('div').filter({ hasText: /^OpenAI API Key \(Fallback\)/ }).getByRole('button', { name: 'Test' }).first();
+        await openAiTestBtn.click();
+
+        await expect(page.getByText(`✗ OpenAI connection failed. Reason: ${errorMessage}`)).toBeVisible();
     });
 
     test('Valid Dropbox Token', async ({ page }) => {

@@ -2,7 +2,9 @@ import { motion } from 'framer-motion';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { resetPipeline } from '@/features/pipeline/slice/pipelineActions';
 import { selectMetrics } from '@/features/pipeline/slice/pipelineSelectors';
+import { selectAllCreatives } from '@/features/creative/slice/creativeSelectors';
 import { Button } from '@/components/elements/generic/Button';
+import { Alert, AlertDescription, AlertTitle } from '@/components/elements/generic/Alert';
 import { Card, CardTitle, CardDescription, CardContent, CardHeader } from '@/components/elements/generic/Card';
 import { Separator } from '@/components/elements/generic/Separator';
 import { OutputGallery } from '@/components/elements/unique/OutputGallery';
@@ -20,6 +22,8 @@ function formatTime(seconds: number): string {
 export function ResultsScreen() {
   const dispatch = useAppDispatch();
   const metrics = useAppSelector(selectMetrics);
+  const creatives = useAppSelector(selectAllCreatives);
+  const hasDownloadOnlyAssets = Object.values(creatives).some((creative) => creative.storageMode === 'download');
 
   return (
     <motion.div
@@ -70,6 +74,14 @@ export function ResultsScreen() {
         <Separator className="opacity-50" />
 
         <CardContent className="py-10">
+          {hasDownloadOnlyAssets && (
+            <Alert className="mb-6 border-amber-300 bg-amber-50 text-amber-950">
+              <AlertTitle>Dropbox unavailable for one or more assets</AlertTitle>
+              <AlertDescription>
+                The pipeline still completed. Use the download buttons below to save the PNG files locally.
+              </AlertDescription>
+            </Alert>
+          )}
           <h3 className="text-xl font-semibold mb-6">Generated Asset Gallery</h3>
           <OutputGallery />
         </CardContent>

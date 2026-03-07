@@ -63,8 +63,10 @@ const resolveRequestErrorMessage = (value: unknown): string => {
 
 const processProduct = async (
   product: Product,
-  apiKey: string,
-  dropboxAccessToken: string,
+  apiKey: string | null,
+  openAiApiKey: string | null,
+  pollinationsApiKey: string | null,
+  dropboxAccessToken: string | null,
   originalCampaignMessage: string,
   localizedCampaignMessage: string,
   targetRegion: string,
@@ -87,6 +89,8 @@ const processProduct = async (
         apiSlice.endpoints.generateImage.initiate({
           prompt,
           apiKey,
+          openAiApiKey,
+          pollinationsApiKey,
         })
       ).unwrap();
     } catch (err: unknown) {
@@ -126,23 +130,55 @@ const processProduct = async (
 
       try {
         const composed = await buildCreativeVariant(sourceImageUrl, ratio, localizedCampaignMessage);
-        await dispatch(
-          apiSlice.endpoints.saveCreativeToDropbox.initiate({
-            path: `/${outputPath}`,
-            contentBase64: composed.contentBase64,
-            accessToken: dropboxAccessToken,
-          })
-        ).unwrap();
+        if (!dropboxAccessToken) {
+          dispatch(
+            creativePersisted({
+              id: creativeId,
+              productName: product.name,
+              formatName: ratio.name,
+              outputUrl: composed.outputUrl,
+              storageMode: 'download',
+              storageError: 'Dropbox token not configured. Download this PNG directly from Results.',
+              metadata,
+            })
+          );
+          return true;
+        }
 
-        dispatch(
-          creativePersisted({
-            id: creativeId,
-            productName: product.name,
-            formatName: ratio.name,
-            outputUrl: composed.outputUrl,
-            metadata,
-          })
-        );
+        try {
+          await dispatch(
+            apiSlice.endpoints.saveCreativeToDropbox.initiate({
+              path: `/${outputPath}`,
+              contentBase64: composed.contentBase64,
+              accessToken: dropboxAccessToken,
+            })
+          ).unwrap();
+
+          dispatch(
+            creativePersisted({
+              id: creativeId,
+              productName: product.name,
+              formatName: ratio.name,
+              outputUrl: composed.outputUrl,
+              storageMode: 'dropbox',
+              metadata,
+            })
+          );
+        } catch (error) {
+          dispatch(
+            creativePersisted({
+              id: creativeId,
+              productName: product.name,
+              formatName: ratio.name,
+              outputUrl: composed.outputUrl,
+              storageMode: 'download',
+              storageError: error instanceof Error
+                ? `${error.message}. Download this PNG directly from Results.`
+                : 'Dropbox upload failed. Download this PNG directly from Results.',
+              metadata,
+            })
+          );
+        }
         return true;
       } catch (error) {
         dispatch(
@@ -184,20 +220,12 @@ listenerMiddleware.startListening({
     const state = listenerApi.getState() as RootState;
     const brief = state.brief.brief;
     const apiKey = state.settings.apiKey;
+    const openAiApiKey = state.settings.openAiApiKey;
+    const pollinationsApiKey = state.settings.pollinationsApiKey;
     const dropboxAccessToken = state.settings.dropboxAccessToken;
 
     if (!brief) {
       listenerApi.dispatch(pipelineError('No brief loaded'));
-      return;
-    }
-
-    if (!apiKey) {
-      listenerApi.dispatch(pipelineError('API key not configured'));
-      return;
-    }
-
-    if (!dropboxAccessToken) {
-      listenerApi.dispatch(pipelineError('Dropbox access token not configured'));
       return;
     }
 
@@ -232,6 +260,7 @@ listenerMiddleware.startListening({
             text: brief.campaignMessage,
             targetLanguage,
             apiKey,
+            openAiApiKey,
           })
         ).unwrap();
         listenerApi.dispatch(setLocalizedCampaignMessage(translated.translatedText));
@@ -257,6 +286,8 @@ listenerMiddleware.startListening({
         await processProduct(
           product,
           apiKey,
+          openAiApiKey,
+          pollinationsApiKey,
           dropboxAccessToken,
           originalCampaignMessage,
           localizedCampaignMessage,

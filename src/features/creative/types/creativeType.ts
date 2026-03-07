@@ -11,4 +11,6 @@ export interface Creative {
   outputPath?: string;
   metadata?: CreativeMetadata;
   error?: string;
+  storageMode?: 'dropbox' | 'download';
+  storageError?: string;
 }
