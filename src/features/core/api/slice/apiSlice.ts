@@ -24,6 +24,7 @@ export const apiSlice = createApi({
             },
             body: JSON.stringify({
               prompt,
+              negative_prompt: "text, watermark, typography, letters, words, logo",
               apiKey: leonardoApiKey,
             }),
           });

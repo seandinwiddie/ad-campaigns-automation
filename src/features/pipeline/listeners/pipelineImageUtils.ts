@@ -51,7 +51,7 @@ const drawTextOverlay = (
   height: number
 ): void => {
   const fontSize = Math.max(36, Math.floor(height * 0.05));
-  context.font = `700 ${fontSize}px Arial, sans-serif`;
+  context.font = `700 ${fontSize}px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
   context.textAlign = 'center';
   context.textBaseline = 'bottom';
 
@@ -80,20 +80,24 @@ const drawTextOverlay = (
   const bottomPadding = Math.max(40, Math.floor(height * 0.06));
   const startY = height - bottomPadding - totalHeight + lineHeight;
 
-  const paddingX = 20;
-  const backdropWidth = maxTextWidth + paddingX * 2;
-  const backdropHeight = totalHeight + 24;
-  const backdropX = (width - backdropWidth) / 2;
+  const backdropX = 0;
   const backdropY = startY - lineHeight + 8;
+  const backdropWidth = width;
+  const backdropHeight = height - backdropY;
 
-  context.fillStyle = 'rgba(0, 0, 0, 0.45)';
+  const gradient = context.createLinearGradient(0, backdropY, 0, height);
+  gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+  gradient.addColorStop(0.5, 'rgba(0, 0, 0, 0.6)');
+  gradient.addColorStop(1, 'rgba(0, 0, 0, 0.85)');
+
+  context.fillStyle = gradient;
   context.fillRect(backdropX, backdropY, backdropWidth, backdropHeight);
 
   context.fillStyle = '#FFFFFF';
-  context.shadowColor = 'rgba(0, 0, 0, 0.85)';
-  context.shadowBlur = 8;
+  context.shadowColor = 'rgba(0, 0, 0, 0.9)';
+  context.shadowBlur = 12;
   context.shadowOffsetX = 0;
-  context.shadowOffsetY = 2;
+  context.shadowOffsetY = 4;
   lines.forEach((line, index) => {
     context.fillText(line, width / 2, startY + index * lineHeight);
   });

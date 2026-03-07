@@ -80,7 +80,7 @@ const processProduct = async (
 
     // Construct prompt, including brand colors if available for compliance
     const brandColors = getState().compliance.brandColors;
-    let prompt = `${product.name}: ${product.description}`;
+    let prompt = `Professional product photography of a modern ${product.name}, ${product.description}, resting perfectly centered in the frame with ample empty space around the subject, 8k resolution, highly detailed, minimalist clean background, no text.`;
     if (brandColors.length > 0) {
       // Leonardo responds better to simple color names rather than hex codes, 
       // but we append the hex codes to ensure it has the exact reference if needed.
