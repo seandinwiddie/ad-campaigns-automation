@@ -77,7 +77,16 @@ const processProduct = async (
   } else {
     dispatch(resolveAsset({ productId: product.id }));
     dispatch(assetGenerating(product.id));
-    const prompt = `${product.name}: ${product.description}`;
+
+    // Construct prompt, including brand colors if available for compliance
+    const brandColors = getState().compliance.brandColors;
+    let prompt = `${product.name}: ${product.description}`;
+    if (brandColors.length > 0) {
+      // Leonardo responds better to simple color names rather than hex codes, 
+      // but we append the hex codes to ensure it has the exact reference if needed.
+      prompt += `, visually featuring these primary colors prominently: ${brandColors.join(', ')}`;
+    }
+
     let generated;
     try {
       generated = await dispatch(

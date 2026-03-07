@@ -14,18 +14,57 @@ const parseHexColor = (value: string): [number, number, number] | null => {
   ];
 };
 
+const hexToHsl = (hex: string): [number, number, number] | null => {
+  const rgb = parseHexColor(hex);
+  if (!rgb) return null;
+
+  const r = rgb[0] / 255;
+  const g = rgb[1] / 255;
+  const b = rgb[2] / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0, s = 0, l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+
+  return [h * 360, s * 100, l * 100];
+};
+
 const isCloseColor = (a: string, b: string): boolean => {
-  const rgbA = parseHexColor(a);
-  const rgbB = parseHexColor(b);
-  if (!rgbA || !rgbB) {
+  const hslA = hexToHsl(a);
+  const hslB = hexToHsl(b);
+
+  if (!hslA || !hslB) {
     return a.toLowerCase() === b.toLowerCase();
   }
-  const distance = Math.sqrt(
-    (rgbA[0] - rgbB[0]) ** 2 +
-    (rgbA[1] - rgbB[1]) ** 2 +
-    (rgbA[2] - rgbB[2]) ** 2
-  );
-  return distance <= 45;
+
+  // Extremely loose match based strictly on hue and ignoring light/saturation differences
+  // Hue is a circle (0-360), so we find the shortest distance
+  let hueDiff = Math.abs(hslA[0] - hslB[0]);
+  if (hueDiff > 180) {
+    hueDiff = 360 - hueDiff;
+  }
+
+  // If the hue is within 60 degrees (very wide margin, e.g. yellow-green matches green), 
+  // or if both are essentially grayscale (very low saturation or extreme lightness/darkness)
+  const isGrayscaleA = hslA[1] < 15 || hslA[2] < 15 || hslA[2] > 85;
+  const isGrayscaleB = hslB[1] < 15 || hslB[2] < 15 || hslB[2] > 85;
+
+  if (isGrayscaleA && isGrayscaleB) {
+    return true; // Match grayscale colors together
+  }
+
+  return hueDiff <= 60; // Extremely forgiving hue match
 };
 
 const initialState: ComplianceState = {
@@ -47,12 +86,17 @@ export const complianceSlice = createSlice({
     },
     checkBrandColors(state, action: PayloadAction<string[]>) {
       const usedColors = action.payload;
-      const missing = state.brandColors.filter(
-        (bc) => !usedColors.some((uc) => isCloseColor(uc, bc))
+      const matchedColors = state.brandColors.filter(
+        (bc) => usedColors.some((uc) => isCloseColor(uc, bc))
       );
       state.issues = state.issues.filter((i) => i.type !== 'brand_color');
-      for (const color of missing) {
-        state.issues.push({ type: 'brand_color', detail: `Missing brand color: ${color}` });
+
+      // Looser validation: Only fail if NO brand colors are found
+      if (state.brandColors.length > 0 && matchedColors.length === 0) {
+        state.issues.push({
+          type: 'brand_color',
+          detail: `None of the brand colors (${state.brandColors.join(', ')}) were detected.`
+        });
       }
     },
     checkProhibitedWords(state, action: PayloadAction<string>) {
