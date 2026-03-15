@@ -1,5 +1,9 @@
 import { pipelineSlice } from './pipelineSlice';
 
+/**
+ * Exported actions from the pipeline slice for managing the lifecycle 
+ * of the generation workflow, including progress and error states.
+ */
 export const {
   startPipeline,
   advanceStep,

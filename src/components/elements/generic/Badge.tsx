@@ -24,6 +24,20 @@ const badgeVariants = cva(
   }
 )
 
+/**
+ * The Badge component is a small label used to highlight a status or category.
+ * It comes in several variants: default, secondary, destructive, and outline.
+ * 
+ * **User Story:**
+ * - As a user, I want subtle visual indicators for product statuses (pending, completed, failed) 
+ *   so I can quickly understand the state of the pipeline at a glance.
+ * 
+ * @example
+ * <Badge variant="secondary">In Progress</Badge>
+ * 
+ * @param {React.ComponentProps<"span"> & VariantProps<typeof badgeVariants>} props - The component props.
+ * @returns {JSX.Element} The rendered Badge component.
+ */
 function Badge({
   className,
   variant,

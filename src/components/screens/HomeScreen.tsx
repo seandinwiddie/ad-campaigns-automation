@@ -12,6 +12,14 @@ import { motion } from 'framer-motion';
 import { BriefEditor } from '@/components/elements/unique/BriefEditor';
 import { HomeDashboardCard } from '@/components/elements/unique/HomeDashboardCard';
 
+/**
+ * HomeScreen is the default landing page of the application.
+ * It provides the interface for marketers to input campaign briefs and start the generation process.
+ * 
+ * **User Story:**
+ * - As a marketer, I want to land on a page where I can immediately start my creative 
+ *   workflow by providing a brief.
+ */
 export function HomeScreen() {
   const dispatch = useAppDispatch();
   const isBriefValid = useAppSelector(selectIsBriefValid);

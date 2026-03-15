@@ -10,6 +10,14 @@ export const metadata: Metadata = {
   description: 'AI-powered ad campaign creative generation',
 };
 
+/**
+ * The root layout component for the application.
+ * It provides the base HTML structure, global font (Inter), and integrates the StoreProvider.
+ * 
+ * **User Story:**
+ * - As a developer, I want a consistent root layout that handles global styling 
+ *   and state provision so I can focus on building feature-specific screens.
+ */
 export default function RootLayout({
   children,
 }: {

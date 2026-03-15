@@ -38,6 +38,22 @@ const buttonVariants = cva(
   }
 )
 
+/**
+ * The Button component is the primary interactive element for user actions.
+ * It supports various styles (variants) and sizes, and can also be rendered as a different element using `asChild`.
+ * 
+ * **User Story:**
+ * - As a developer, I want a standardized button component that follows our
+ *   design system tokens for size, color, and interactivity.
+ * 
+ * @example
+ * <Button variant="destructive" size="sm" onClick={() => console.log('Delete')}>
+ *   Delete Item
+ * </Button>
+ * 
+ * @param {React.ComponentProps<"button"> & VariantProps<typeof buttonVariants> & { asChild?: boolean }} props - The component props.
+ * @returns {JSX.Element} The rendered Button component.
+ */
 function Button({
   className,
   variant = "default",

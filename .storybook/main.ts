@@ -1,3 +1,7 @@
+/**
+ * Storybook configuration for the ad-campaigns-automation project.
+ * Defines story locations, required addons, and framework settings.
+ */
 import type { StorybookConfig } from '@storybook/nextjs';
 
 const config: StorybookConfig = {

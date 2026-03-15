@@ -3,6 +3,14 @@ import {
   validateLeonardoApiKey,
 } from '@/features/core/api/client/leonardoClient';
 
+/**
+ * Integration tests for the Leonardo AI client.
+ * Mocks the fetch API to simulate various upstream responses and error conditions.
+ * 
+ * **User Story:**
+ * - "As a developer, I want to ensure the Leonardo client correctly handles
+ *   polling, timeouts, and API error payloads."
+ */
 describe('leonardo', () => {
   beforeEach(() => {
     global.fetch = jest.fn() as jest.MockedFunction<typeof fetch>;

@@ -26,6 +26,16 @@ type SettingsCredentialsCardProps = {
   onSaveCredentials: () => void;
 };
 
+/**
+ * SettingsCredentialsCard manages the input and validation of external API keys.
+ * Handles Leonardo.ai and Dropbox authentication flows.
+ * 
+ * **User Story:**
+ * - As a user, I want to securely enter my API credentials and test their
+ *   connectivity before starting any work.
+ * 
+ * @param props - Component properties for credential state and input handlers.
+ */
 export function SettingsCredentialsCard({
   leonardoApiKeyInput,
   dropboxAccessTokenInput,

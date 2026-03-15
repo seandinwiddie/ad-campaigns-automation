@@ -13,6 +13,16 @@ type ResultsDashboardCardProps = {
   onProcessNewBrief: () => void;
 };
 
+/**
+ * ResultsDashboardCard presents the final output of the automation pipeline.
+ * It includes high-level performance metrics, the asset gallery, and compliance reports.
+ * 
+ * **User Story:**
+ * - As a business owner, I want to see the time saved and efficiency gains
+ *   provided by the automation to justify the tool's value.
+ * 
+ * @param props - Component properties including calculated metrics and generated labels.
+ */
 export function ResultsDashboardCard({
   metrics,
   generatedAtLabel,

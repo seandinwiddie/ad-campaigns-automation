@@ -1,3 +1,6 @@
+/**
+ * Selectors for retrieving user settings and checking credential availability.
+ */
 import type { RootState } from '@/app/store';
 
 export const selectLeonardoApiKey = (state: RootState): string | null => state.settings.leonardoApiKey;

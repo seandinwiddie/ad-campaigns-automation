@@ -19,6 +19,23 @@ const alertVariants = cva(
   }
 )
 
+/**
+ * The Alert component is used to display important messages to the user.
+ * It provides a visual container for alerts with different variants like default or destructive.
+ * 
+ * **User Story:**
+ * - As a user, I want important system notifications (success, errors, warnings) 
+ *   to be highlighted in a distinct container so I don't miss them.
+ * 
+ * @example
+ * <Alert variant="default">
+ *   <AlertTitle>Heads up!</AlertTitle>
+ *   <AlertDescription>This is a default alert message.</AlertDescription>
+ * </Alert>
+ * 
+ * @param {React.ComponentProps<"div"> & VariantProps<typeof alertVariants>} props - The component props.
+ * @returns {JSX.Element} The rendered Alert component.
+ */
 function Alert({
   className,
   variant,
@@ -34,6 +51,13 @@ function Alert({
   )
 }
 
+/**
+ * The AlertTitle component is used to provide a heading for the alert message.
+ * It ensures proper styling and alignment within the Alert container.
+ * 
+ * @param {React.ComponentProps<"div">} props - The component props.
+ * @returns {JSX.Element} The rendered AlertTitle component.
+ */
 function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -44,6 +68,13 @@ function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * The AlertDescription component is used to provide the main content of the alert.
+ * It is typically placed after the AlertTitle.
+ * 
+ * @param {React.ComponentProps<"div">} props - The component props.
+ * @returns {JSX.Element} The rendered AlertDescription component.
+ */
 function AlertDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

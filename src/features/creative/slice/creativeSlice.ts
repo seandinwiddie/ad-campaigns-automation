@@ -1,3 +1,11 @@
+/**
+ * Creative slice manages the generation and tracking of multi-format ad variants.
+ * It tracks progress across different aspect ratios (1:1, 16:9, 9:16).
+ * 
+ * **User Story:**
+ * - As a creative director, I want the system to generate ad variants in multiple 
+ *   aspect ratios for each product so I can deploy them across different platforms.
+ */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { CreativeAspectRatio } from '../types/creativeAspectRatioType';
 import type { CreativeState } from '../types/creativeStateType';
@@ -90,9 +98,19 @@ export const creativeSlice = createSlice({
         recalculateProgress(state);
       }
     },
+    /**
+     * Resets the creative state to initial values.
+     */
     resetCreatives(state) {
       Object.assign(state, initialState);
     },
   },
 });
+
+/**
+ * Redux action creators for the creative slice.
+ */
+export const { initCreatives, creativeCompleted, creativePersisted, creativeFailed, resetCreatives } =
+  creativeSlice.actions;
+
 export default creativeSlice.reducer;

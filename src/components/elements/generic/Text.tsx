@@ -27,6 +27,13 @@ interface TextProps
     as?: "span" | "p" | "div" | "label"
 }
 
+/**
+ * Shared typographic component for all non-heading text.
+ * 
+ * **User Story:**
+ * - As a developer, I want a reusable text component with predefined styles (body, muted, mono) 
+ *   to ensure consistent typography throughout the application.
+ */
 function Text({ className, variant, as, ...props }: TextProps) {
     const Component = as || (variant === "body" ? "p" : "span")
     return (

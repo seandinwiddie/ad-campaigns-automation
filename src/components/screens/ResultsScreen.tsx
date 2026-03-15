@@ -7,6 +7,14 @@ import {
 } from '@/features/pipeline/slice/pipelineSelectors';
 import { ResultsDashboardCard } from '@/components/elements/unique/ResultsDashboardCard';
 
+/**
+ * ResultsScreen displays the final output of the automation pipeline.
+ * It celebrates the completion and shows the business value generated.
+ * 
+ * **User Story:**
+ * - As a user, I want to see the final results of my campaign generation
+ *   so I can review the assets and confirm the time saved.
+ */
 export function ResultsScreen() {
   const dispatch = useAppDispatch();
   const metrics = useAppSelector(selectResultsMetricsViewModel);

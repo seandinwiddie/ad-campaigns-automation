@@ -1,3 +1,13 @@
+/**
+ * Pipeline listener orchestrates the end-to-end automation workflow.
+ * It listens for the startPipeline action and manages the sequential processing 
+ * of assets, generation of creatives, and compliance validation.
+ * 
+ * **User Story:**
+ * - As a user, when I start the pipeline, I want the system to automatically
+ *   generate AI images, compose ad variants, and check them against my brand
+ *   guidelines without manual intervention.
+ */
 import { createListenerMiddleware } from '@reduxjs/toolkit';
 import type { AppDispatch, RootState } from '@/app/store';
 import { apiSlice } from '@/features/core/api/slice/apiSlice';
@@ -23,6 +33,9 @@ import { ASPECT_RATIOS } from '@/features/creative/constants/formatAspectRatios'
 import type { Product } from '@/features/brief/types/productType';
 import { buildCreativeVariant, detectDominantColors } from '@/features/pipeline/listeners/pipelineImageUtils';
 
+/**
+ * Listener middleware for orchestrating the overall automation pipeline.
+ */
 export const listenerMiddleware = createListenerMiddleware();
 
 type RequestError = {
@@ -31,6 +44,12 @@ type RequestError = {
   message?: unknown;
 };
 
+/**
+ * Resolves a user-friendly error message from a mutation error object.
+ * 
+ * @param value - The raw error object from RTK Query.
+ * @returns A string representing the error message.
+ */
 const resolveRequestErrorMessage = (value: unknown): string => {
   if (!value || typeof value !== 'object') {
     return 'Failed to generate image';
@@ -59,6 +78,22 @@ const resolveRequestErrorMessage = (value: unknown): string => {
   return 'Failed to generate image';
 };
 
+/**
+ * Orchestrates the processing for a single product.
+ * Steps include:
+ * 1. Resolving/Generating the source asset via Leonardo AI.
+ * 2. Composing creative variants for all aspect ratios.
+ * 3. Persisting results to Dropbox.
+ * 4. Running compliance checks on the generated outputs.
+ * 
+ * @param product - The product brief metadata.
+ * @param leonardoApiKey - Credentials for Leonardo AI.
+ * @param dropboxAccessToken - Credentials for Dropbox.
+ * @param campaignMessage - The marketing copy to overlay.
+ * @param targetRegion - The geographic focus for the campaign.
+ * @param dispatch - Redux dispatch function.
+ * @param getState - Redux getState function.
+ */
 const processProduct = async (
   product: Product,
   leonardoApiKey: string,

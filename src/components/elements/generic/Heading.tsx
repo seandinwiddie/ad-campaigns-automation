@@ -25,6 +25,14 @@ interface HeadingProps
     as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
 }
 
+/**
+ * Typographic component for headings (h1-h4).
+ * Uses class-variance-authority for consistent styling.
+ * 
+ * **User Story:**
+ * - As a reader, I want clear visual hierarchy through standard heading levels 
+ *   so I can understand the document structure at a glance.
+ */
 function Heading({ className, variant, as, ...props }: HeadingProps) {
     const Component = as || variant || "h1"
     return (

@@ -2,6 +2,13 @@ import * as React from "react"
 
 import { cn } from "@/common/cn"
 
+/**
+ * Standard text input component with theme-aware styling.
+ * 
+ * **User Story:**
+ * - As a developer, I want a reusable input component that handles visual states 
+ *   (focus, disabled, error) consistently across all forms.
+ */
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
     <input

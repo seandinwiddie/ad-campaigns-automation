@@ -1,3 +1,13 @@
+/**
+ * Persistence Middleware handles side-effects that bridge Redux state with external systems:
+ * 1. Synchronizing API credentials to localStorage.
+ * 2. Managing navigation between screens based on process status.
+ * 3. Orchestrating the elapsed timer for the pipeline.
+ * 
+ * **User Stories:**
+ * - "I want my credentials to be remembered so I don't have to enter them every time I open the app."
+ * - "I want the app to automatically transition between the brief, processing, and results screens."
+ */
 import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
 import type { RootState } from '@/app/store';
 import {
@@ -18,9 +28,16 @@ import { startPipeline, pipelineComplete, resetPipeline } from '@/features/pipel
 const LEONARDO_API_KEY_STORAGE_KEY = 'ad-campaigns-leonardo-api-key';
 const DROPBOX_TOKEN_STORAGE_KEY = 'ad-campaigns-dropbox-token';
 
+/**
+ * Listener middleware for handling persistence-related side effects.
+ */
 export const persistenceMiddleware = createListenerMiddleware();
 
 // Persist API key to localStorage when it changes
+/**
+ * Listener to synchronize API credentials (Leonardo and Dropbox) to localStorage
+ * whenever any related set or clear action is dispatched.
+ */
 persistenceMiddleware.startListening({
   matcher: isAnyOf(setLeonardoApiKey, clearLeonardoApiKey, setDropboxAccessToken, clearDropboxAccessToken),
   effect: (_action, listenerApi) => {
@@ -46,6 +63,10 @@ persistenceMiddleware.startListening({
 });
 
 // Navigate to pipeline when pipeline starts + start elapsed timer
+/**
+ * Listener to handle the initiation of the pipeline.
+ * It transitions the UI to the pipeline screen and starts a per-second timer tracker.
+ */
 persistenceMiddleware.startListening({
   actionCreator: startPipeline,
   effect: async (_action, listenerApi) => {
@@ -66,6 +87,9 @@ persistenceMiddleware.startListening({
 });
 
 // Navigate to results on pipeline complete
+/**
+ * Listener to transition the UI to the results screen once the pipeline has finished processing.
+ */
 persistenceMiddleware.startListening({
   actionCreator: pipelineComplete,
   effect: (_action, listenerApi) => {
@@ -74,6 +98,9 @@ persistenceMiddleware.startListening({
 });
 
 // On resetPipeline, navigate to home
+/**
+ * Listener to reset the UI to the home screen and clear the elapsed timer.
+ */
 persistenceMiddleware.startListening({
   actionCreator: resetPipeline,
   effect: (_action, listenerApi) => {
@@ -83,6 +110,12 @@ persistenceMiddleware.startListening({
 });
 
 // Load API key from localStorage on app init
+/**
+ * Rehydrates the Redux store from localStorage on application startup.
+ * Automatically synchronizes stored credentials back into the Redux and UI state.
+ * 
+ * @param dispatch - The Redux dispatch function.
+ */
 export const initializeStore = (dispatch: (action: unknown) => void) => {
   try {
     const persistedLeonardoApiKey = localStorage.getItem(LEONARDO_API_KEY_STORAGE_KEY);

@@ -2,6 +2,13 @@ import * as React from "react"
 
 import { cn } from "@/common/cn"
 
+/**
+ * Multi-line text input component that auto-sizes to its content.
+ * 
+ * **User Story:**
+ * - As a marketer, I want a spacious text area to input detailed campaign 
+ *   requirements (briefs) that expands as I type for a better writing experience.
+ */
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
     <textarea

@@ -45,10 +45,23 @@ const recalculateProgress = (state: PipelineState): void => {
   state.productStatuses = statuses;
 };
 
+/**
+ * The pipeline slice manages the state of the campaign generation pipeline.
+ * It tracks the overall status, progress of individual products, and performance metrics.
+ * 
+ * **User Story Context:**
+ * - As a marketer, I want to see the real-time progress of my campaign generation.
+ * - As a user, I want to be notified of any product failures during the pipeline.
+ * - As a manager, I want to see the time saved and efficiency gains from the automated pipeline.
+ */
 export const pipelineSlice = createSlice({
   name: 'pipeline',
   initialState,
   reducers: {
+    /**
+     * Starts the pipeline for a set of product IDs.
+     * Resets previous metrics and initializes product statuses to 'pending'.
+     */
     startPipeline(state, action: PayloadAction<{ productIds: string[] }>) {
       state.status = 'validating';
       state.startTime = Date.now();
@@ -63,15 +76,24 @@ export const pipelineSlice = createSlice({
       }
       recalculateProgress(state);
     },
+    /**
+     * Advances the pipeline to the next predefined step in STEP_ORDER.
+     */
     advanceStep(state) {
       const currentIndex = STEP_ORDER.indexOf(state.status);
       if (currentIndex >= 0 && currentIndex < STEP_ORDER.length - 1) {
         state.status = STEP_ORDER[currentIndex + 1];
       }
     },
+    /**
+     * Manually sets the pipeline status.
+     */
     setPipelineStatus(state, action: PayloadAction<PipelineStatus>) {
       state.status = action.payload;
     },
+    /**
+     * Marks a specific product as successfully completed.
+     */
     productCompleted(state, action: PayloadAction<{ productId: string }>) {
       const { productId } = action.payload;
       if (state.products[productId]) {
@@ -79,6 +101,9 @@ export const pipelineSlice = createSlice({
       }
       recalculateProgress(state);
     },
+    /**
+     * Marks a specific product as failed and records the error message.
+     */
     productFailed(state, action: PayloadAction<{ productId: string; error: string }>) {
       const { productId, error } = action.payload;
       if (state.products[productId]) {
@@ -92,6 +117,12 @@ export const pipelineSlice = createSlice({
       });
       recalculateProgress(state);
     },
+    /**
+     * Finalizes the pipeline, calculating metrics like time saved and efficiency gains.
+     * 
+     * @example
+     * pipelineComplete({ successCount: 10, totalProducts: 10, elapsedSeconds: 300 })
+     */
     pipelineComplete(
       state,
       action: PayloadAction<{ successCount: number; totalProducts: number; elapsedSeconds: number }>
@@ -114,14 +145,23 @@ export const pipelineSlice = createSlice({
       state.currentProduct = null;
       recalculateProgress(state);
     },
+    /**
+     * Sets a global fatal error for the pipeline.
+     */
     pipelineFailed(state, action: PayloadAction<string>) {
       state.error = action.payload;
     },
+    /**
+     * Sets a global error and transitions status to 'error'.
+     */
     pipelineError(state, action: PayloadAction<string>) {
       state.error = action.payload;
       state.status = 'error';
       state.currentProduct = null;
     },
+    /**
+     * Sets the product currently being processed.
+     */
     setCurrentProduct(state, action: PayloadAction<string>) {
       state.currentProduct = action.payload;
       if (state.products[action.payload]) {
@@ -129,10 +169,29 @@ export const pipelineSlice = createSlice({
       }
       recalculateProgress(state);
     },
+    /**
+     * Resets the entire pipeline state to initial values.
+     */
     resetPipeline(state) {
       Object.assign(state, initialState);
     },
   },
 });
+
+/**
+ * Redux action creators for the pipeline slice.
+ */
+export const {
+  startPipeline,
+  advanceStep,
+  setPipelineStatus,
+  productCompleted,
+  productFailed,
+  pipelineComplete,
+  pipelineFailed,
+  pipelineError,
+  setCurrentProduct,
+  resetPipeline,
+} = pipelineSlice.actions;
 
 export default pipelineSlice.reducer;

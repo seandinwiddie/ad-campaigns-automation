@@ -1,5 +1,9 @@
 import { uiSlice } from './uiSlice';
 
+/**
+ * Exported actions from the UI slice for toggling UI state, 
+ * navigation, and input management.
+ */
 export const {
   setLoading,
   setActiveModal,

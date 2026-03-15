@@ -1,17 +1,35 @@
 import { Button } from './Button';
 import './header.css';
 
+/**
+ * Metadata for the user currently logged into the Storybook preview.
+ */
 type User = {
   name: string;
 };
 
+/**
+ * Props for the Header component.
+ */
 export interface HeaderProps {
+  /** The user object to display in the header. */
   user?: User;
+  /** Callback triggered when the 'Log in' button is clicked. */
   onLogin?: () => void;
+  /** Callback triggered when the 'Log out' button is clicked. */
   onLogout?: () => void;
+  /** Callback triggered when the 'Sign up' button is clicked. */
   onCreateAccount?: () => void;
 }
 
+/**
+ * Standard header component for the application.
+ * Manages the top-level navigation and user session UI states.
+ * 
+ * **User Story:**
+ * - "As a user, I want a consistent header so I can easily log in, 
+ *   sign up, or see my current account status."
+ */
 export const Header = ({ user, onLogin, onLogout, onCreateAccount }: HeaderProps) => (
   <header>
     <div className="storybook-header">

@@ -5,6 +5,14 @@ import { Progress as ProgressPrimitive } from "radix-ui"
 
 import { cn } from "@/common/cn"
 
+/**
+ * Visual progress indicator using Radix UI primitives.
+ * Provides accessible labels for screen readers.
+ * 
+ * **User Story:**
+ * - As a user, I want a visual progress bar during long-running tasks 
+ *   so I can see that the application is still working and estimate time remaining.
+ */
 function Progress({
   className,
   value,

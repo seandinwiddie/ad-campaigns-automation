@@ -16,6 +16,14 @@ import {
 import { cn } from "@/common/cn"
 import { Label } from "@/components/elements/generic/Label"
 
+/**
+ * Comprehensive form system integrating React Hook Form with Radix UI Label.
+ * Provides field-level context for accessible error messages and descriptions.
+ * 
+ * **User Story:**
+ * - As a developer, I want a robust form system that automatically handles 
+ *   validation states and accessibility requirements so I can build reliable input flows.
+ */
 const Form = FormProvider
 
 type FormFieldContextValue<

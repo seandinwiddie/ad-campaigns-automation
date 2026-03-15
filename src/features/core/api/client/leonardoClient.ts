@@ -1,3 +1,11 @@
+/**
+ * Leonardo AI Client provides low-level integration with the Leonardo.ai REST API.
+ * It handles image generation requests and long-polling for job completion.
+ * 
+ * **User Story:**
+ * - As a system, I want to abstract the complexity of Leonardo's asynchronous 
+ *   generation API so I can simply request an image and wait for its completion.
+ */
 const LEONARDO_API_BASE_URL = 'https://cloud.leonardo.ai/api/rest/v1';
 const LEONARDO_LIGHTNING_MODEL_ID = 'b24e16ff-06e3-43eb-8d33-4416c2d75876';
 const LEONARDO_DEFAULT_IMAGE_SIZE = 768;
@@ -32,11 +40,20 @@ type LeonardoGenerationStatusResponse = {
   };
 };
 
+/**
+ * Delays execution for a specified duration.
+ * 
+ * @param delayMs - The number of milliseconds to sleep.
+ */
 const sleep = async (delayMs: number): Promise<void> =>
   new Promise((resolve) => {
     setTimeout(resolve, delayMs);
   });
 
+/**
+ * Parses the error response body from a Leonardo API response.
+ * Handles both JSON and plain text error payloads.
+ */
 const parseErrorText = async (response: Response): Promise<string> => {
   const text = await response.text();
   if (!text.trim()) {
@@ -68,12 +85,21 @@ const parseErrorText = async (response: Response): Promise<string> => {
   return text;
 };
 
+/**
+ * Creates standard headers for Leonardo API requests.
+ */
 const createLeonardoHeaders = (apiKey: string): HeadersInit => ({
   accept: 'application/json',
   authorization: `Bearer ${apiKey}`,
   'content-type': 'application/json',
 });
 
+/**
+ * Validates a Leonardo API key by attempting to fetch available models.
+ * 
+ * @param apiKey - The key to validate.
+ * @returns An object indicating success or describing the failure.
+ */
 export const validateLeonardoApiKey = async (apiKey: string): Promise<LeonardoResult<{ success: true }>> => {
   try {
     const response = await fetch(`${LEONARDO_API_BASE_URL}/platformModels`, {
@@ -106,6 +132,14 @@ export const validateLeonardoApiKey = async (apiKey: string): Promise<LeonardoRe
   }
 };
 
+/**
+ * Generates an image using Leonardo AI Lightning model.
+ * Performs long-polling until the image is generated, then downloads and returns it as base64.
+ * 
+ * @param prompt - The text prompt for generation.
+ * @param apiKey - The Leonardo API key.
+ * @returns The base64-encoded image data upon success.
+ */
 export const generateLeonardoImage = async (
   prompt: string,
   apiKey: string

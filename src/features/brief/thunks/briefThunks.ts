@@ -1,14 +1,33 @@
+/**
+ * Brief thunks handle the asynchronous processing and validation of campaign briefs.
+ * It provides the logic for converting raw user input into structured data.
+ * 
+ * **User Story:**
+ * - As a marketer, I want to paste my campaign ideas in JSON or YAML format and
+ *   have the system automatically extract product names and brand guidelines
+ *   so I don't have to fill out complex forms manually.
+ */
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { CampaignBrief } from '@/features/brief/types/campaignBriefType';
 import type { ValidationError } from '@/features/brief/types/validationErrorType';
 import * as yaml from 'js-yaml';
 
+/**
+ * Formats a raw string into a URL-friendly slug.
+ */
 const slugify = (value: string): string =>
   value
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
 
+/**
+ * Parses raw input text (JSON or YAML) into a CampaignBrief object.
+ * Applies defaults and transforms common field variations to standard keys.
+ * 
+ * @param input - The raw raw text string from the editor.
+ * @returns A structured CampaignBrief object.
+ */
 const parseBriefInput = (input: string): CampaignBrief => {
   const parsed = (() => {
     try {
@@ -112,6 +131,10 @@ const parseBriefInput = (input: string): CampaignBrief => {
   };
 };
 
+/**
+ * Validates a parsed campaign brief against business rules.
+ * Requires at least 2 products and all target segment fields to be populated.
+ */
 const validateBrief = (brief: CampaignBrief): ValidationError[] => {
   const errors: ValidationError[] = [];
   if (!brief.products || brief.products.length < 2) {
@@ -129,7 +152,12 @@ const validateBrief = (brief: CampaignBrief): ValidationError[] => {
   return errors;
 };
 
-export const loadBrief = createAsyncThunk<
+/**
+ * Async thunk to load and validate a campaign brief from raw text.
+ * Supports JSON and YAML parsing.
+ * Triggers state updates in the brief slice upon success or failure.
+ */
+ export const loadBrief = createAsyncThunk<
   CampaignBrief,
   string,
   { rejectValue: ValidationError[] }

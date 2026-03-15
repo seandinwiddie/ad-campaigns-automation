@@ -3,6 +3,15 @@ import { generateLeonardoImage } from '@/features/core/api/client/leonardoClient
 
 export const runtime = 'nodejs';
 
+/**
+ * POST /api/leonardo/generate
+ * Proxies image generation requests to the Leonardo AI client.
+ * Requires a 'prompt' and 'apiKey' in the JSON body.
+ * 
+ * **User Story:**
+ * - "As a user, I want the server to handle complex long-polling with AI providers
+ *   so the UI remains responsive and simple."
+ */
 export async function POST(request: NextRequest) {
   const payload = await request.json().catch(() => null) as {
     prompt?: string;

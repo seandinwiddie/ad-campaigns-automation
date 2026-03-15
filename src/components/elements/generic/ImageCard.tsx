@@ -1,4 +1,5 @@
 import * as React from "react"
+import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "./Card"
 import { Badge } from "./Badge"
 import { cn } from "@/common/cn"
@@ -12,6 +13,10 @@ interface ImageCardProps extends React.HTMLAttributes<HTMLDivElement> {
     footer?: React.ReactNode
 }
 
+/**
+ * Utility component for displaying an image within a themed card.
+ * Supports badges for status and footer content for metadata.
+ */
 function ImageCard({
     src,
     alt,
@@ -26,9 +31,11 @@ function ImageCard({
         <Card className={cn("overflow-hidden", className)} {...props}>
             <div className="relative aspect-video w-full overflow-hidden bg-muted">
                 {src ? (
-                    <img
+                    <Image
                         src={src}
                         alt={alt}
+                        fill
+                        unoptimized
                         className="h-full w-full object-cover transition-transform hover:scale-105"
                     />
                 ) : (

@@ -1,3 +1,13 @@
+/**
+ * End-to-end tests for the Settings screen.
+ * Considers user stories related to API credential configuration and validation.
+ * 
+ * **User Stories Tested:**
+ * - "As a user, I want to configure my Leonardo and Dropbox credentials 
+ *   so the app can generate and save assets."
+ * - "As a user, I want to see immediate feedback when I test my API keys 
+ *   so I know they are working before I save them."
+ */
 import { test, expect } from '@playwright/test';
 
 test.describe('Settings API Configurations', () => {

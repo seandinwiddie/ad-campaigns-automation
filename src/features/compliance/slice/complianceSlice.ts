@@ -1,3 +1,11 @@
+/**
+ * Compliance slice handles brand safety and style adherence checks.
+ * It validates generated assets against brand colors and prohibited word lists.
+ * 
+ * **User Story:**
+ * - As a brand manager, I want the system to flag any violations of my brand's 
+ *   color palette or prohibited words list to ensure high quality and safety.
+ */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { ComplianceReport } from '@/features/compliance/types/complianceReportType';
 import type { ComplianceState } from '@/features/compliance/types/complianceStateType';
@@ -24,7 +32,8 @@ const hexToHsl = (hex: string): [number, number, number] | null => {
 
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
-  let h = 0, s = 0, l = (max + min) / 2;
+  const l = (max + min) / 2;
+  let h = 0, s = 0;
 
   if (max !== min) {
     const d = max - min;
@@ -134,10 +143,28 @@ export const complianceSlice = createSlice({
         isCompliant: action.payload.colorCompliance && prohibitedWordsFound.length === 0,
       };
     },
+    /**
+     * Resets the compliance state to its initial configuration.
+     */
     resetCompliance(state) {
       Object.assign(state, initialState);
     },
   },
 });
+
+/**
+ * Redux action creators for the compliance slice.
+ */
+export const {
+  setBrandColors,
+  setProhibitedWords,
+  checkBrandColors,
+  checkProhibitedWords,
+  clearIssues,
+  setBrandGuidelines,
+  setComplianceReport,
+  reportComplianceForProduct,
+  resetCompliance,
+} = complianceSlice.actions;
 
 export default complianceSlice.reducer;

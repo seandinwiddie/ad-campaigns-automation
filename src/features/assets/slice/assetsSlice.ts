@@ -1,3 +1,10 @@
+/**
+ * Assets slice manages the resolution and tracking of product images.
+ * Assets can either be 'resolved' from existing URLs or 'generated' via AI.
+ * 
+ * **User Story:**
+ * - As a system, I need to track which products have assets ready and which need generation.
+ */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { AssetsState } from '../types/assetsStateType';
 
@@ -56,9 +63,19 @@ export const assetsSlice = createSlice({
       };
       recalculateDerived(state);
     },
+    /**
+     * Resets the entire asset state to initial values.
+     */
     resetAssets(state) {
       Object.assign(state, initialState);
     },
   },
 });
+
+/**
+ * Redux action creators for the assets slice.
+ */
+export const { resolveAsset, assetGenerating, assetGenerated, assetFailed, resetAssets } =
+  assetsSlice.actions;
+
 export default assetsSlice.reducer;

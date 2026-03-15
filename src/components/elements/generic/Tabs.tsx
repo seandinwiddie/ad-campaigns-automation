@@ -6,6 +6,14 @@ import { Tabs as TabsPrimitive } from "radix-ui"
 
 import { cn } from "@/common/cn"
 
+/**
+ * Tabbed navigation system based on Radix UI primitives.
+ * Supports horizontal and vertical orientations.
+ * 
+ * **User Story:**
+ * - As a user, I want to toggle between different views (like metrics, gallery, 
+ *   and reports) within the same dashboard card to keep my workspace organized.
+ */
 function Tabs({
   className,
   orientation = "horizontal",

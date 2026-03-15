@@ -5,6 +5,14 @@ import { Button } from '@/components/elements/generic/Button';
 import { AspectRatio } from '@/components/elements/generic/AspectRatio';
 import { Separator } from '@/components/elements/generic/Separator';
 
+/**
+ * OutputGallery provides a visual grid of all generated ad creatives,
+ * grouped by product. It handles loading states and error feedback per asset.
+ * 
+ * **User Story:**
+ * - As a creative director, I want to review all generated variants for each product
+ *   in one place so I can pick the best performing ones.
+ */
 export function OutputGallery() {
   const sections = useAppSelector(selectOutputGallerySections);
 

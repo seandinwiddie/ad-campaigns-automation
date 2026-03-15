@@ -1,12 +1,22 @@
 import React from 'react';
-
 import { Header } from './Header';
 import './page.css';
 
+/**
+ * Mock user data for the Storybook page example.
+ */
 type User = {
   name: string;
 };
 
+/**
+ * Example page component for Storybook documentation.
+ * Demonstrates how to compose atomic components into a full layout.
+ * 
+ * **User Story:**
+ * - "As a developer, I want to see how atomic components come together in 
+ *   a realistic page layout so I can verify visual consistency across handles."
+ */
 export const Page: React.FC = () => {
   const user: User = { name: 'Jane Doe' };
 

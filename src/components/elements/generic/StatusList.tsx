@@ -9,6 +9,14 @@ interface StatusListItemProps extends React.HTMLAttributes<HTMLDivElement> {
     isHighlighted?: boolean
 }
 
+/**
+ * A single item in the status list representing a step or a product.
+ * Displays an icon based on the current status (idle, running, complete, error).
+ */
+/**
+ * A single item in the status list representing a step or a product.
+ * Displays an icon based on the current status (idle, running, complete, error).
+ */
 function StatusListItem({
     status,
     label,
@@ -57,6 +65,14 @@ interface StatusListProps extends React.HTMLAttributes<HTMLDivElement> {
     children: React.ReactNode
 }
 
+/**
+ * Container for a list of StatusListItems.
+ * Used for displaying step-by-step progress of the automation pipeline.
+ * 
+ * **User Story:**
+ * - As a user, I want a structured list of technical operations (like image 
+ *   analysis or generation) so I can verify each step of the automation.
+ */
 function StatusList({ children, className, ...props }: StatusListProps) {
     return (
         <div className={cn("space-y-1", className)} {...props}>

@@ -5,6 +5,13 @@ import { Separator as SeparatorPrimitive } from "radix-ui"
 
 import { cn } from "@/common/cn"
 
+/**
+ * Horizontal or vertical divider for semantic sectioning.
+ * 
+ * **User Story:**
+ * - As a designer, I want a standardized separator to visually distinguish 
+ *   different sections of the dashboard while maintaining a clean look.
+ */
 function Separator({
   className,
   orientation = "horizontal",

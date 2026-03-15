@@ -1,3 +1,17 @@
+/**
+ * The Redux store configuration for the application.
+ * 
+ * **User Story:**
+ * - As a developer, I want a single source of truth that integrates
+ *   asynchronous side effects, local storage persistence, and real-time listeners.
+ * 
+ * Integrates various slice reducers and middleware including:
+ * - Persistence (localStorage)
+ * - Navigation listeners
+ * - Brief workflow listeners
+ * - Pipeline progress orchestration
+ * - RTK Query API middleware
+ */
 import { configureStore } from '@reduxjs/toolkit';
 import { initializeStore } from '@/app/persistenceMiddleware';
 import { apiSlice } from '@/features/core/api/slice/apiSlice';
@@ -7,6 +21,9 @@ import { settingsListenerMiddleware } from '@/features/core/settings/listeners/s
 import { listenerMiddleware } from '@/features/pipeline/listeners/pipelineListener';
 import { rootReducer, type RootState } from '@/app/rootReducer';
 
+/**
+ * Factory function to create a configured Redux store instance.
+ */
 const makeStore = () => {
   const isDev = process.env.NODE_ENV === 'development';
 

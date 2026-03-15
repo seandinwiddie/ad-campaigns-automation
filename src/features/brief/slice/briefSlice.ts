@@ -1,3 +1,11 @@
+/**
+ * Brief slice manages the campaign requirements, product list, and brand guidelines.
+ * It handles the loading and validation of the campaign brief.
+ * 
+ * **User Story:**
+ * - As a marketer, I want to upload a campaign brief so the system can extract 
+ *   product details and brand guidelines automatically.
+ */
 import { createSlice } from '@reduxjs/toolkit';
 import type { BriefState } from '../types/briefStateType';
 import { loadBrief } from '@/features/brief/thunks/briefThunks';
@@ -47,4 +55,10 @@ export const briefSlice = createSlice({
       });
   },
 });
+
+/**
+ * Redux action creators for the brief slice.
+ */
+export const { resetBrief, clearBrief } = briefSlice.actions;
+
 export default briefSlice.reducer;

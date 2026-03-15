@@ -1,11 +1,34 @@
+/**
+ * Selectors for tracking creative generation progress and mapping state 
+ * to UI ViewModels for the gallery view.
+ */
 import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '@/app/store';
 import { ASPECT_RATIOS } from '@/features/creative/constants/formatAspectRatios';
 
+/**
+ * Selects the total map of all generated creative ad variants.
+ */
 export const selectCreatives = (state: RootState) => state.creative.creatives;
+
+/**
+ * Selects the overall creative generation progress percentage.
+ */
 export const selectCreativeProgress = (state: RootState) => state.creative.progressPct;
+
+/**
+ * Selects the total number of creative variants that have completed processing (success or fail).
+ */
 export const selectCompletedCount = (state: RootState): number => state.creative.completedCount;
+
+/**
+ * Selects the total number of creative variants requested for the current brief.
+ */
 export const selectTotalCount = (state: RootState): number => state.creative.totalCount;
+
+/**
+ * Alias for selecting the entire creatives map.
+ */
 export const selectAllCreatives = (state: RootState) => state.creative.creatives;
 
 const FORMAT_RATIO_LOOKUP = Object.fromEntries(
@@ -27,6 +50,10 @@ export type OutputGallerySectionViewModel = {
   creatives: OutputGalleryCardViewModel[];
 };
 
+/**
+ * Derives the ViewModel for the results gallery.
+ * Groups creatives by product and provides formatted data for display cards.
+ */
 export const selectOutputGallerySections = createSelector(
   [selectAllCreatives],
   (creatives): OutputGallerySectionViewModel[] => {

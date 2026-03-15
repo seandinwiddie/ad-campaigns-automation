@@ -4,33 +4,56 @@ import * as React from "react"
 import { XIcon } from "lucide-react"
 import { Dialog as DialogPrimitive } from "radix-ui"
 
+/**
+ * Modal dialog system based on Radix UI primitives.
+ * Provides accessible overlay, content, header, footer, and close actions.
+ * 
+ * **User Story:**
+ * - As a user, I want focused modal interactions for critical actions (like 
+ *   confirming credential tests) to prevent accidental interference with the background.
+ */
 import { cn } from "@/common/cn"
 import { Button } from "@/components/elements/generic/Button"
 
+/**
+ * Root component for a modal dialog.
+ */
 function Dialog({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
 }
 
+/**
+ * Trigger button to open the dialog.
+ */
 function DialogTrigger({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
 }
 
+/**
+ * Portal to render the dialog content into the document body.
+ */
 function DialogPortal({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Portal>) {
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
 }
 
+/**
+ * Button to close the dialog.
+ */
 function DialogClose({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Close>) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
 }
 
+/**
+ * Semi-transparent backdrop for the dialog.
+ */
 function DialogOverlay({
   className,
   ...props
@@ -47,6 +70,9 @@ function DialogOverlay({
   )
 }
 
+/**
+ * The main container for the dialog's content (the modal box).
+ */
 function DialogContent({
   className,
   children,
@@ -81,6 +107,9 @@ function DialogContent({
   )
 }
 
+/**
+ * Top section of the dialog content for title and description.
+ */
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -91,6 +120,9 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Bottom section of the dialog content for primary actions.
+ */
 function DialogFooter({
   className,
   showCloseButton = false,
@@ -118,6 +150,9 @@ function DialogFooter({
   )
 }
 
+/**
+ * The accessible title for the dialog.
+ */
 function DialogTitle({
   className,
   ...props
@@ -131,6 +166,9 @@ function DialogTitle({
   )
 }
 
+/**
+ * The accessible description for the dialog.
+ */
 function DialogDescription({
   className,
   ...props

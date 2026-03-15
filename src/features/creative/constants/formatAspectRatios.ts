@@ -1,5 +1,9 @@
 import type { FormatAspectRatio } from '../types/formatAspectRatioType';
 
+/**
+ * Standard aspect ratios supported by the creative generation pipeline.
+ * Each entry defines the target dimensions and label for ad platforms.
+ */
 export const ASPECT_RATIOS: readonly FormatAspectRatio[] = [
   { name: '1x1', width: 1080, height: 1080, ratio: '1:1' },
   { name: '9x16', width: 1080, height: 1920, ratio: '9:16' },

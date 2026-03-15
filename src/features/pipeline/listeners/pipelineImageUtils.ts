@@ -1,7 +1,18 @@
+/**
+ * Utility functions for image manipulation and color detection.
+ * Provides functions for drawing text overlays on images and extracting brand colors.
+ * 
+ * **User Story:**
+ * - As a system, I want to programmatically enhance images with marketing copy 
+ *   and audit their visual characteristics to ensure brand safety standards are met.
+ */
 import type { FormatAspectRatio } from '@/features/creative/types/formatAspectRatioType';
 
 const HEX = '0123456789ABCDEF';
 
+/**
+ * Converts a numerical component (0-255) to a 2-character hex string.
+ */
 const toHex = (value: number): string => {
   const normalized = Math.max(0, Math.min(255, value));
   const high = Math.floor(normalized / 16);
@@ -9,13 +20,22 @@ const toHex = (value: number): string => {
   return `${HEX[high]}${HEX[low]}`;
 };
 
+/**
+ * Converts RGB components to a standard CSS hex color string.
+ */
 const rgbToHex = (r: number, g: number, b: number): string => `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 
+/**
+ * Quantizes a color component into buckets of 32 to reduce color space for dominant color detection.
+ */
 const quantize = (value: number): number => {
   const bucket = Math.round(value / 32) * 32;
   return Math.max(0, Math.min(255, bucket));
 };
 
+/**
+ * Utility to load an image from a source URL into an HTMLImageElement.
+ */
 const loadImage = (src: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
     const image = new Image();
@@ -24,6 +44,9 @@ const loadImage = (src: string): Promise<HTMLImageElement> =>
     image.src = src;
   });
 
+/**
+ * Draws an image onto a canvas using object-fit: cover logic.
+ */
 const drawCoverImage = (context: CanvasRenderingContext2D, image: HTMLImageElement, width: number, height: number): void => {
   const sourceRatio = image.width / image.height;
   const targetRatio = width / height;
@@ -44,6 +67,16 @@ const drawCoverImage = (context: CanvasRenderingContext2D, image: HTMLImageEleme
   context.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, width, height);
 };
 
+/**
+ * Draws a multi-line text overlay with a dark backdrop gradient on a canvas.
+ * It intelligently wraps text to fit within 80% of the canvas width and
+ * applies a subtle shadow and gradient backdrop for readability on any background.
+ * 
+ * @param context - The 2D rendering context of the canvas.
+ * @param text - The marketing message to draw.
+ * @param width - The width of the canvas.
+ * @param height - The height of the canvas.
+ */
 const drawTextOverlay = (
   context: CanvasRenderingContext2D,
   text: string,
@@ -107,8 +140,14 @@ const drawTextOverlay = (
   context.shadowOffsetY = 0;
 };
 
+/**
+ * Converts a canvas element to a PNG Data URL.
+ */
 const canvasToPngDataUrl = (canvas: HTMLCanvasElement): string => canvas.toDataURL('image/png');
 
+/**
+ * Extracts the raw base64 string from a Data URL.
+ */
 export const dataUrlToBase64 = (dataUrl: string): string => {
   const marker = 'base64,';
   const markerIndex = dataUrl.indexOf(marker);
@@ -118,6 +157,10 @@ export const dataUrlToBase64 = (dataUrl: string): string => {
   return dataUrl.slice(markerIndex + marker.length);
 };
 
+/**
+ * Main entry point for composing a creative variant.
+ * Crops the subject, applies text overlays, and returns data URLs and base64 content.
+ */
 export const buildCreativeVariant = async (
   sourceImageUrl: string,
   format: FormatAspectRatio,
@@ -146,6 +189,14 @@ export const buildCreativeVariant = async (
   };
 };
 
+/**
+ * Detects the most prominent colors in an image using canvas-based sampling and quantization.
+ * This is used to verify if the generated AI image adheres to the specified brand colors.
+ * 
+ * @param imageUrl - The source image URL or Data URL.
+ * @param count - The number of dominant colors to return (default is 5).
+ * @returns An array of hex color strings.
+ */
 export const detectDominantColors = async (imageUrl: string, count = 5): Promise<string[]> => {
   if (typeof window === 'undefined') {
     return [];

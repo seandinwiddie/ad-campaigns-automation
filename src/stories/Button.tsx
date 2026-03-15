@@ -1,5 +1,6 @@
-import './button.css';
-
+/**
+ * Props for the Button component.
+ */
 export interface ButtonProps {
   /** Is this the principal call to action on the page? */
   primary?: boolean;
@@ -13,7 +14,14 @@ export interface ButtonProps {
   onClick?: () => void;
 }
 
-/** Primary UI component for user interaction */
+/**
+ * Primary UI component for user interaction.
+ * Used throughout the Storybook and application as a base interactive element.
+ * 
+ * **User Story:**
+ * - "As a user, I want a clear, interactive button to submit my actions 
+ *   or navigate through the application logic."
+ */
 export const Button = ({
   primary = false,
   size = 'medium',

@@ -6,6 +6,14 @@ import { Badge } from '@/components/elements/generic/Badge';
 import { CardDescription } from '@/components/elements/generic/Card';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/elements/generic/Table';
 
+/**
+ * ComplianceReport displays a breakdown of brand safety and guideline adherence
+ * for each generated asset in the campaign.
+ * 
+ * **User Story:**
+ * - As a brand manager, I want to see which assets passed or failed compliance checks
+ *   (color usage, prohibited words) so I can ensure brand quality.
+ */
 export function ComplianceReport() {
   const entries = useAppSelector(selectComplianceReportEntries);
 

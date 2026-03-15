@@ -3,6 +3,15 @@ import { validateLeonardoApiKey } from '@/features/core/api/client/leonardoClien
 
 export const runtime = 'nodejs';
 
+/**
+ * POST /api/leonardo/validate
+ * Validates a Leonardo API key by communicating with the Leonardo.ai platform.
+ * Requires an 'apiKey' in the JSON body.
+ * 
+ * **User Story:**
+ * - "As a user, I want to know immediately if my API key is valid before
+ *   starting a large automation pipeline."
+ */
 export async function POST(request: NextRequest) {
   const payload = await request.json().catch(() => null) as {
     apiKey?: string;

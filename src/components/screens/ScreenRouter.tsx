@@ -14,6 +14,10 @@ const SCREENS = {
   results: ResultsScreen,
 } as const;
 
+/**
+ * ScreenRouter act as the high-level navigator for the single-page application.
+ * It conditionally renders the appropriate screen based on the current ui state.
+ */
 export function ScreenRouter() {
   const currentPage = useAppSelector(selectCurrentPage);
   const Screen = SCREENS[currentPage] ?? SettingsScreen;

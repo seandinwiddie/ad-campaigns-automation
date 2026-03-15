@@ -1,3 +1,11 @@
+/**
+ * Settings listener manages the credential validation and persistence workflow.
+ * It interacts with the Leonardo and Dropbox APIs to verify user-provided keys.
+ * 
+ * **User Story:**
+ * - As a user, I want my API keys to be validated in real-time so I know
+ *   immediately if I've entered an incorrect or expired key.
+ */
 import { createListenerMiddleware } from '@reduxjs/toolkit';
 import type { RootState } from '@/app/rootReducer';
 import { apiSlice } from '@/features/core/api/slice/apiSlice';
@@ -8,8 +16,8 @@ import {
   dropboxValidationSucceeded,
   leonardoValidationFailed,
   leonardoValidationSucceeded,
-  requestDropboxValidation,
   requestLeonardoValidation,
+  requestDropboxValidation,
   setCurrentPage,
 } from '@/features/core/ui/slice/uiActions';
 import {
@@ -17,8 +25,17 @@ import {
   selectTrimmedLeonardoApiKeyInput,
 } from '@/features/core/ui/slice/uiSelectors';
 
+/**
+ * Listener middleware for handling settings-related validation and persistence.
+ */
 export const settingsListenerMiddleware = createListenerMiddleware();
 
+/**
+ * Resolves a human-readable error message from an API mutation error.
+ * 
+ * @param error - The raw error from the API mutation.
+ * @returns A processed error string.
+ */
 const getMutationErrorMessage = (error: unknown): string => {
   if (!error || typeof error !== 'object') {
     return 'Request failed. Please verify the value and try again.';

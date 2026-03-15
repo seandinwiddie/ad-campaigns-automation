@@ -4,6 +4,33 @@ import * as React from "react"
 
 import { cn } from "@/common/cn"
 
+/**
+ * The Table component provides a structured way to display data in rows and columns.
+ * It is wrapped in a responsive container to handle overflow on small screens.
+ * 
+ * **User Story:**
+ * - As a user, I want a clear tabular view of complex data like compliance reports 
+ *   or product statuses so I can easily scan for important information.
+ * 
+ * @example
+ * <Table>
+ *   <TableHeader>
+ *     <TableRow>
+ *       <TableHead>Name</TableHead>
+ *       <TableHead>Status</TableHead>
+ *     </TableRow>
+ *   </TableHeader>
+ *   <TableBody>
+ *     <TableRow>
+ *       <TableCell>EcoBottle</TableCell>
+ *       <TableCell>Completed</TableCell>
+ *     </TableRow>
+ *   </TableBody>
+ * </Table>
+ * 
+ * @param {React.ComponentProps<"table">} props - The component props.
+ * @returns {JSX.Element} The rendered Table component.
+ */
 function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
     <div
@@ -19,6 +46,11 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
   )
 }
 
+/**
+ * The TableHeader component represents the header section (thead) of the table.
+ * 
+ * @param {React.ComponentProps<"thead">} props - The component props.
+ */
 function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   return (
     <thead
@@ -29,6 +61,11 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   )
 }
 
+/**
+ * The TableBody component represents the main content section (tbody) of the table.
+ * 
+ * @param {React.ComponentProps<"tbody">} props - The component props.
+ */
 function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
   return (
     <tbody
@@ -39,6 +76,11 @@ function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
   )
 }
 
+/**
+ * The TableFooter component represents the footer section (tfoot) of the table.
+ * 
+ * @param {React.ComponentProps<"tfoot">} props - The component props.
+ */
 function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
   return (
     <tfoot
@@ -52,6 +94,11 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
   )
 }
 
+/**
+ * The TableRow component represents a single row (tr) in the table.
+ * 
+ * @param {React.ComponentProps<"tr">} props - The component props.
+ */
 function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
   return (
     <tr
@@ -65,6 +112,11 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
   )
 }
 
+/**
+ * The TableHead component represents a header cell (th) in the table.
+ * 
+ * @param {React.ComponentProps<"th">} props - The component props.
+ */
 function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
@@ -78,6 +130,11 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   )
 }
 
+/**
+ * The TableCell component represents a standard data cell (td) in the table.
+ * 
+ * @param {React.ComponentProps<"td">} props - The component props.
+ */
 function TableCell({ className, ...props }: React.ComponentProps<"td">) {
   return (
     <td
@@ -91,6 +148,11 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
   )
 }
 
+/**
+ * The TableCaption component provides a summary or title for the table.
+ * 
+ * @param {React.ComponentProps<"caption">} props - The component props.
+ */
 function TableCaption({
   className,
   ...props

@@ -1,3 +1,16 @@
+/**
+ * End-to-end tests for the campaign generation pipeline.
+ * Verified core user stories related to pipeline execution, output organization, 
+ * and error handling.
+ * 
+ * **User Stories Tested:**
+ * - "As a user, I want my generated assets to be organized by product and format 
+ *   so I can easily find the specific variant I need."
+ * - "As a user, I want the system to handle API failures gracefully and show me 
+ *   clear error messages so I know what went wrong."
+ * - "As a user, I want the application to prevent me from starting a run if 
+ *   I haven't provided all necessary credentials."
+ */
 import { expect, test } from '@playwright/test';
 
 const LEONARDO_API_PATTERN = '**/api/leonardo/generate';

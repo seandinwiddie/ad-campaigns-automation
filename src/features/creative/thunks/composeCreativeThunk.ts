@@ -1,3 +1,11 @@
+/**
+ * Logic for compositing text overlays onto images.
+ * Uses SVG for text rendering and Sharp for image manipulation.
+ * 
+ * **User Story:**
+ * - As a creative editor, I want to programmatically add stylized text to 
+ *   my product images so I can create promotional banners in bulk.
+ */
 import sharp from 'sharp';
 import type { ComposeOptions } from '../types/composeOptionsType';
 
@@ -8,6 +16,9 @@ const defaultOptions: Required<ComposeOptions> = {
   shadow: true,
 };
 
+/**
+ * Escapes special characters for use in SVG XML.
+ */
 const escapeXml = (text: string): string =>
   text
     .replace(/&/g, '&amp;')
@@ -16,6 +27,9 @@ const escapeXml = (text: string): string =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
 
+/**
+ * Calculates the vertical Y position for text based on alignment.
+ */
 const getYPosition = (position: 'top' | 'center' | 'bottom', height: number, fontSize: number): number => {
   switch (position) {
     case 'top':
@@ -27,6 +41,17 @@ const getYPosition = (position: 'top' | 'center' | 'bottom', height: number, fon
   }
 };
 
+/**
+ * Composites a text overlay onto an image using SVG and Sharp.
+ * Handles resizing to the target dimensions and optional drop shadows.
+ * 
+ * @param imageInput - Path or Buffer of the source image.
+ * @param text - The copy to overlay.
+ * @param width - Target layout width.
+ * @param height - Target layout height.
+ * @param options - Visual styling configuration.
+ * @returns A promise resolving to the composited image Buffer.
+ */
 export const composeCreative = async (
   imageInput: string | Buffer,
   text: string,

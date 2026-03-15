@@ -1,3 +1,11 @@
+/**
+ * Redux Toolkit Query API slice for external service communication.
+ * Manages mutations for image generation (Leonardo) and file storage (Dropbox).
+ * 
+ * **User Story:**
+ * - As a developer, I want a centralized and typed API layer to handle async
+ *   side effects with external AI and storage providers.
+ */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const parseErrorText = async (response: Response): Promise<string> => {
@@ -149,6 +157,9 @@ export const apiSlice = createApi({
   }),
 });
 
+/**
+ * Redux Toolkit hooks for API mutations.
+ */
 export const {
   useGenerateImageMutation,
   useSaveCreativeToDropboxMutation,

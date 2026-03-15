@@ -12,6 +12,16 @@ type HomeDashboardCardProps = {
   children: React.ReactNode;
 };
 
+/**
+ * HomeDashboardCard provides the primary entry point for the application.
+ * It houses the brief editor and the main action to initiate the automation pipeline.
+ * 
+ * **User Story:**
+ * - As a marketer, I want a centralized dashboard where I can configure my campaign
+ *   requirements and start the generation process with one click.
+ * 
+ * @param props - Component properties including brief validity and callbacks.
+ */
 export function HomeDashboardCard({
   isBriefValid,
   runPipelineLabel,

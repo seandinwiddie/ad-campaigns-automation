@@ -1,5 +1,13 @@
 'use client';
 
+/**
+ * The BriefEditor component allows users to input and validate campaign requirements.
+ * supports JSON and YAML formats and provides real-time validation feedback.
+ * 
+ * **User Story:**
+ * - As a marketer, I want to paste my campaign brief and see which products were identified.
+ * - As a developer, I want to load example data to quickly test the end-to-end flow.
+ */
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { loadExampleBriefText, setBriefRawText } from '@/features/core/ui/slice/uiActions';
 import { selectBriefRawText, selectCanLoadBrief } from '@/features/core/ui/slice/uiSelectors';

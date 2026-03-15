@@ -22,6 +22,14 @@ import {
 } from '@/features/core/ui/slice/uiSelectors';
 import { SettingsCredentialsCard } from '@/components/elements/unique/SettingsCredentialsCard';
 
+/**
+ * SettingsScreen handles the configuration of external service credentials.
+ * It ensures the application has the necessary permissions to run the automation.
+ * 
+ * **User Story:**
+ * - As a user, I want a dedicated space to manage my API keys so I can 
+ *   control the tool's access to my external accounts.
+ */
 export function SettingsScreen() {
   const dispatch = useAppDispatch();
   const leonardoApiKeyInput = useAppSelector(selectLeonardoApiKeyInput);

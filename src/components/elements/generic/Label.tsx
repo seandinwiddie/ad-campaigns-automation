@@ -5,6 +5,13 @@ import { Label as LabelPrimitive } from "radix-ui"
 
 import { cn } from "@/common/cn"
 
+/**
+ * Accessible label component for form fields.
+ * 
+ * **User Story:**
+ * - As a user with accessibility needs, I want clear labels for all input fields
+ *   that are properly associated so I can navigate the application with a screen reader.
+ */
 function Label({
   className,
   ...props

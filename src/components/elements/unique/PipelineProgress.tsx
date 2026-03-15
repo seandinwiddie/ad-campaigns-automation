@@ -7,6 +7,14 @@ import { Badge } from '@/components/elements/generic/Badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/elements/generic/Card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/elements/generic/Table';
 
+/**
+ * PipelineProgress renders the granular processing status of the campaign.
+ * It includes an overall progress bar and a detailed table of product-specific statuses.
+ * 
+ * **User Story:**
+ * - As a user, I want to see exactly which products are currently being processed
+ *   and how far along the overall pipeline is.
+ */
 export function PipelineProgress() {
   const progressViewModel = useAppSelector(selectPipelineProgressViewModel);
 

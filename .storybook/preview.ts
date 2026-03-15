@@ -1,3 +1,7 @@
+/**
+ * Storybook preview configuration.
+ * Configures global decorators, parameters, and UI controls for component stories.
+ */
 import type { Preview } from "@storybook/nextjs";
 
 const preview: Preview = {

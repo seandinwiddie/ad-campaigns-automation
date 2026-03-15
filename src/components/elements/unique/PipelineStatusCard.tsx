@@ -17,6 +17,16 @@ type PipelineStatusCardProps = {
   onBackToBrief: () => void;
 };
 
+/**
+ * PipelineStatusCard is the primary container for the pipeline execution view.
+ * it manages the transition between processing, completion, and error states.
+ * 
+ * **User Story:**
+ * - As a user, I want to be notified when my campaign generation is successful
+ *   or if there are issues that require my intervention (like credentials).
+ * 
+ * @param props - Component properties representing the current pipeline state.
+ */
 export function PipelineStatusCard({
   status,
   fatalError,
