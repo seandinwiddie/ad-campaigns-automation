@@ -1,3 +1,6 @@
+/**
+ * Defines the brief feature state that tracks parsed input, validation feedback, and transient loading.
+ */
 import type { CampaignBrief } from './campaignBriefType';
 import type { ValidationError } from './validationErrorType';
 

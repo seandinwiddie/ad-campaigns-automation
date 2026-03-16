@@ -1,3 +1,6 @@
+/**
+ * Selectors and view-model mappers that translate raw pipeline state into progress and results UI data.
+ */
 import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '@/app/store';
 import { selectElapsedSeconds } from '@/features/core/ui/slice/uiSelectors';
@@ -62,6 +65,9 @@ export const selectProgress = (state: RootState): number => state.pipeline.progr
  */
 export const selectProductStatuses = (state: RootState): Record<string, ProductStatus> => state.pipeline.productStatuses;
 
+/**
+ * Presentation copy for the high-level pipeline status banner.
+ */
 const STATUS_LABELS: Record<string, string> = {
   idle: 'Idle',
   validating: 'Validating brief...',
@@ -72,6 +78,9 @@ const STATUS_LABELS: Record<string, string> = {
   error: 'Error',
 };
 
+/**
+ * Badge metadata keeps row rendering logic out of the progress screen components.
+ */
 const PRODUCT_BADGE_VARIANT: Record<string, 'default' | 'secondary' | 'destructive'> = {
   pending: 'default',
   in_progress: 'secondary',
@@ -86,6 +95,9 @@ const PRODUCT_BADGE_LABEL: Record<string, string> = {
   failed: 'Failed',
 };
 
+/**
+ * Shared duration formatters keep elapsed-time output consistent across progress and results screens.
+ */
 const formatElapsed = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
@@ -196,4 +208,3 @@ export const selectResultsMetricsViewModel = createSelector(
 export const selectResultsGeneratedAtLabel = createSelector([selectEndTime], (endTime) =>
   endTime ? new Date(endTime).toLocaleTimeString() : null
 );
-

@@ -1,3 +1,6 @@
+/**
+ * Re-exports brief slice actions so workflows can reset parsed brief state without importing the reducer.
+ */
 import { briefSlice } from './briefSlice';
 
 /**

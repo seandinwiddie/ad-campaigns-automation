@@ -1,3 +1,6 @@
+/**
+ * Verifies the Leonardo generation route's request validation and upstream error forwarding.
+ */
 import { POST } from './route';
 import { generateLeonardoImage } from '@/features/core/api/client/leonardoClient';
 

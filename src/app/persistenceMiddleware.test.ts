@@ -1,3 +1,6 @@
+/**
+ * Covers startup hydration so saved credentials restore both persistent settings and screen-level input state.
+ */
 import { configureStore } from '@reduxjs/toolkit';
 import { initializeStore } from './persistenceMiddleware';
 import { rootReducer } from './rootReducer';

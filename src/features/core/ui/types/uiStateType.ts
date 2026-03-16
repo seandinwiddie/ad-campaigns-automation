@@ -1,3 +1,6 @@
+/**
+ * Defines the cross-screen UI state that drives navigation, credential forms, and progress messaging.
+ */
 import type { AppPage } from './appPageType';
 
 /**

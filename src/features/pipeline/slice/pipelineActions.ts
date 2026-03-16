@@ -1,3 +1,6 @@
+/**
+ * Re-exports pipeline slice actions so listeners and screens can drive orchestration without reducer coupling.
+ */
 import { pipelineSlice } from './pipelineSlice';
 
 /**

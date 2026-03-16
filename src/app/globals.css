@@ -1,9 +1,11 @@
+/* Global Tailwind and shadcn theme bridge for the app shell, including shared tokens and dark-mode overrides. */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
+/* Shared semantic tokens that map the design-system variables into Tailwind theme keys. */
 @theme inline {
     --radius-sm: calc(var(--radius) - 4px);
     --radius-md: calc(var(--radius) - 2px);
@@ -45,6 +47,7 @@
     --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Default light-theme tokens for the application shell. */
 :root {
     --radius: 0.625rem;
     --background: oklch(1 0 0);
@@ -80,6 +83,7 @@
     --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* Dark-theme overrides reuse the same semantic token names for consistent component styling. */
 .dark {
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
@@ -114,6 +118,7 @@
     --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Base element defaults keep the document aligned with the tokenized theme values. */
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -1,3 +1,6 @@
+/**
+ * Verifies that the creative slice expands products into format variants and tracks completion progress.
+ */
 import { configureStore } from '@reduxjs/toolkit';
 import creativeReducer, {
   ASPECT_RATIOS,

@@ -1,3 +1,6 @@
+/**
+ * Defines the simplified per-product asset model that the UI consumes in status and results views.
+ */
 import type { ProductAssetStatus } from './productAssetStatusType';
 
 /**

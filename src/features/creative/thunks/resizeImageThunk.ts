@@ -1,3 +1,6 @@
+/**
+ * Image resizing helpers used by the composition pipeline to normalize assets into platform-ready dimensions.
+ */
 import sharp from 'sharp';
 
 /**

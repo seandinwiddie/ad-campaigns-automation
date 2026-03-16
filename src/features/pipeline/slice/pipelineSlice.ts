@@ -1,8 +1,14 @@
+/**
+ * State machine reducer for the end-to-end campaign pipeline, including per-product status and summary metrics.
+ */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { PipelineState } from '@/features/pipeline/types/pipelineStateType';
 import type { PipelineStatus } from '@/features/pipeline/types/pipelineStatusType';
 import type { ProductStatus } from '@/features/pipeline/types/productStatusType';
 
+/**
+ * Baseline pipeline snapshot used for both initial load and full reset actions.
+ */
 const initialState: PipelineState = {
   status: 'idle',
   startTime: null,
@@ -17,6 +23,9 @@ const initialState: PipelineState = {
   productStatuses: {},
 };
 
+/**
+ * Ordered state machine steps for the happy-path pipeline lifecycle.
+ */
 const STEP_ORDER: PipelineStatus[] = [
   'idle',
   'validating',
@@ -26,6 +35,9 @@ const STEP_ORDER: PipelineStatus[] = [
   'complete',
 ];
 
+/**
+ * Recomputes derived pipeline progress fields from the per-product map after every state transition.
+ */
 const recalculateProgress = (state: PipelineState): void => {
   const entries = Object.values(state.products);
   if (entries.length === 0) {

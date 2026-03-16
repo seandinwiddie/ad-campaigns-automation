@@ -1,3 +1,6 @@
+/**
+ * Verifies that clearing the brief editor resets both the raw draft text and the parsed brief state.
+ */
 import { configureStore } from '@reduxjs/toolkit';
 import briefReducer from '@/features/brief/slice/briefSlice';
 import { briefListenerMiddleware } from '@/features/brief/listeners/briefListener';

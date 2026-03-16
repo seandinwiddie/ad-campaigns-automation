@@ -1,3 +1,6 @@
+/**
+ * Root Next.js layout that applies global styles, shared metadata, and the Redux provider to every page.
+ */
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';

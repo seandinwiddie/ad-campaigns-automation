@@ -1,3 +1,6 @@
+/**
+ * Defines the full pipeline state snapshot that powers progress screens, failure reporting, and final metrics.
+ */
 import type { PipelineError } from './pipelineErrorType';
 import type { PipelineMetrics } from './pipelineMetricsType';
 import type { PipelineStatus } from './pipelineStatusType';

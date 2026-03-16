@@ -1,3 +1,6 @@
+/**
+ * Root route entry point that hands off rendering to the client-side screen router.
+ */
 import { ScreenRouter } from '@/components/screens/ScreenRouter';
 
 /**

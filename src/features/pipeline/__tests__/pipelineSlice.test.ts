@@ -1,3 +1,6 @@
+/**
+ * Covers the pipeline slice state machine, per-product progress tracking, and summary metric calculation.
+ */
 import { configureStore } from '@reduxjs/toolkit';
 import pipelineReducer, {
 } from '../slice/pipelineSlice';

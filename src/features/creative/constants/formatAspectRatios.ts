@@ -1,3 +1,6 @@
+/**
+ * Central registry of the output formats the pipeline composes for each generated campaign asset.
+ */
 import type { FormatAspectRatio } from '../types/formatAspectRatioType';
 
 /**

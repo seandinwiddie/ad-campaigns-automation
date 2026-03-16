@@ -1,3 +1,6 @@
+/**
+ * Covers the settings slice contract for storing and clearing external provider credentials.
+ */
 import { configureStore } from '@reduxjs/toolkit';
 import settingsReducer from '../slice/settingsSlice';
 import { setLeonardoApiKey, clearLeonardoApiKey } from '../slice/settingsActions';

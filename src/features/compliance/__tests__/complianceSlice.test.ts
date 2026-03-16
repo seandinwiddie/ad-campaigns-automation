@@ -1,3 +1,6 @@
+/**
+ * Covers the compliance rules that turn brand guidelines into campaign-level pass/fail signals.
+ */
 import { configureStore } from '@reduxjs/toolkit';
 import complianceReducer, {
 } from '../slice/complianceSlice';

@@ -1,3 +1,6 @@
+/**
+ * Exercises brief parsing and validation across the supported JSON and YAML input paths.
+ */
 import { configureStore } from '@reduxjs/toolkit';
 import briefReducer from '../slice/briefSlice';
 import type { CampaignBrief } from '../types/campaignBriefType';

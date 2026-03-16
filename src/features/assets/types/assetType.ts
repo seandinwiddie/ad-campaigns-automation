@@ -1,3 +1,6 @@
+/**
+ * Defines the normalized asset record that moves through asset resolution and AI generation.
+ */
 import type { AssetStatus } from './assetStatusType';
 
 /**

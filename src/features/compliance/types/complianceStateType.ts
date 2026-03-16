@@ -1,3 +1,6 @@
+/**
+ * Defines the compliance feature state for guideline inputs, detected issues, and per-product reports.
+ */
 import type { ComplianceIssue } from './complianceIssueType';
 import type { ComplianceReport } from './complianceReportType';
 

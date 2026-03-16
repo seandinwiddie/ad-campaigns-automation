@@ -1,3 +1,6 @@
+/**
+ * Exercises the settings listener workflow that trims credentials, persists them, and stores validation results.
+ */
 import { configureStore } from '@reduxjs/toolkit';
 import { apiSlice } from '@/features/core/api/slice/apiSlice';
 import settingsReducer from '@/features/core/settings/slice/settingsSlice';

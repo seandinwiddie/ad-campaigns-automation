@@ -1,3 +1,6 @@
+/**
+ * Defines the persisted asset feature state, including cached records and derived readiness flags.
+ */
 import type { Asset } from './assetType';
 
 /**

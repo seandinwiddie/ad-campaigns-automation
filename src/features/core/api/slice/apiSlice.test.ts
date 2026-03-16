@@ -1,3 +1,6 @@
+/**
+ * Verifies the RTK Query wrapper around Leonardo and Dropbox HTTP requests.
+ */
 import { configureStore } from '@reduxjs/toolkit';
 import { apiSlice } from './apiSlice';
 

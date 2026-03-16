@@ -1,3 +1,6 @@
+/**
+ * Re-exports UI slice actions so screens and listeners can drive navigation and transient form state consistently.
+ */
 import { uiSlice } from './uiSlice';
 
 /**

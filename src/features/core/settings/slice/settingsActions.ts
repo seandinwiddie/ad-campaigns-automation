@@ -1,3 +1,6 @@
+/**
+ * Re-exports settings slice actions so credential updates stay decoupled from reducer internals.
+ */
 import { settingsSlice } from './settingsSlice';
 
 /**

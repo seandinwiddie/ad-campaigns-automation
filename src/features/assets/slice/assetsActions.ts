@@ -1,3 +1,6 @@
+/**
+ * Re-exports asset slice actions so the rest of the app can dispatch asset workflow events from one place.
+ */
 import { assetsSlice } from './assetsSlice';
 
 /**

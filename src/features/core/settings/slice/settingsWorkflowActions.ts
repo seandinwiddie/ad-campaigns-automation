@@ -1,3 +1,6 @@
+/**
+ * Declares settings workflow actions that listeners expand into validation and persistence side effects.
+ */
 import { createAction } from '@reduxjs/toolkit';
 
 /**

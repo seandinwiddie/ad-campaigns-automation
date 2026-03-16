@@ -1,5 +1,8 @@
 'use client';
 
+/**
+ * Client-only wrapper that injects the shared Redux store into the Next.js app tree.
+ */
 import { Provider } from 'react-redux';
 import { store } from '@/app/store';
 

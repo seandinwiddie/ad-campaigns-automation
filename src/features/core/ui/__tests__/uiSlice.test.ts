@@ -1,3 +1,6 @@
+/**
+ * Covers the UI slice contract for navigation, draft inputs, and elapsed-time tracking.
+ */
 import { configureStore } from '@reduxjs/toolkit';
 import uiReducer from '../slice/uiSlice';
 import {

@@ -1,3 +1,6 @@
+/**
+ * Defines the creative feature state that tracks every requested variant and aggregate completion metrics.
+ */
 import type { Creative } from './creativeType';
 
 /**

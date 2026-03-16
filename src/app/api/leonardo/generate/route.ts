@@ -1,3 +1,6 @@
+/**
+ * Server route that validates generation input and proxies Leonardo image requests through the backend runtime.
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import { generateLeonardoImage } from '@/features/core/api/client/leonardoClient';
 

@@ -1,3 +1,6 @@
+/**
+ * Defines the canonical campaign brief payload consumed by the downstream pipeline stages.
+ */
 import type { BrandGuidelines } from './brandGuidelinesType';
 import type { Product } from './productType';
 

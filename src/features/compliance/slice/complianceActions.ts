@@ -1,3 +1,6 @@
+/**
+ * Re-exports compliance actions so the pipeline can apply guidelines and record audit results centrally.
+ */
 import { complianceSlice } from './complianceSlice';
 
 /**

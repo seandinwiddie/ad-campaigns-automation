@@ -1,3 +1,6 @@
+/**
+ * Re-exports creative slice actions so the pipeline can manage variant lifecycle events from one surface.
+ */
 import { creativeSlice } from './creativeSlice';
 
 /**

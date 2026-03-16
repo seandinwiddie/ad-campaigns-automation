@@ -1,3 +1,6 @@
+/**
+ * Defines the smallest per-product progress record the pipeline needs to render status and recover from failures.
+ */
 import type { ProductStatus } from './productStatusType';
 
 /**

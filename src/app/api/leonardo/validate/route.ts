@@ -1,3 +1,6 @@
+/**
+ * Server route that validates Leonardo credentials without exposing direct provider calls to the browser.
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import { validateLeonardoApiKey } from '@/features/core/api/client/leonardoClient';
 

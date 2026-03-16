@@ -1,3 +1,6 @@
+/**
+ * Verifies the Leonardo validation route's input normalization and upstream error handling.
+ */
 import { POST } from './route';
 import { validateLeonardoApiKey } from '@/features/core/api/client/leonardoClient';
 

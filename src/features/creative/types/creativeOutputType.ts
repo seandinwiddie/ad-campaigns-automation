@@ -1,3 +1,6 @@
+/**
+ * Defines the UI-facing shape of a composed creative artifact after a format-specific output is produced.
+ */
 import type { FormatCreativeStatus } from './formatCreativeStatusType';
 
 /**

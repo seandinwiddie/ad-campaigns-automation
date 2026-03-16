@@ -1,3 +1,6 @@
+/**
+ * Defines the per-variant creative record that the pipeline updates from initialization through persistence.
+ */
 import type { CreativeAspectRatio } from './creativeAspectRatioType';
 import type { CreativeMetadata } from './creativeMetadataType';
 import type { CreativeStatus } from './creativeStatusType';

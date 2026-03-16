@@ -1,3 +1,6 @@
+/**
+ * Covers the asset slice flow so existing images, missing assets, and generated outputs stay in sync.
+ */
 import { configureStore } from '@reduxjs/toolkit';
 import assetsReducer from '../slice/assetsSlice';
 import { resolveAsset, assetGenerated } from '../slice/assetsActions';
