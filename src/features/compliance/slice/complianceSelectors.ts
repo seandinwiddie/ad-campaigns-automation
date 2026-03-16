@@ -1,5 +1,11 @@
 /**
  * Selectors for evaluating brand safety and compliance report status.
+ * They centralize how consumers read the configured guidelines, accumulated issues,
+ * and product-level reports so every screen uses the same compliance interpretation.
+ *
+ * **User Story:**
+ * - As a user reviewing compliance results, I want shared selectors for issues and reports so the UI
+ *   shows a consistent picture of whether my generated campaign assets passed brand checks.
  */
 import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '@/app/store';

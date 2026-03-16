@@ -1,5 +1,11 @@
 /**
  * Verifies the Leonardo generation route's request validation and upstream error forwarding.
+ * These tests explain the route contract by covering trimmed input handling, rejected bad requests,
+ * and pass-through propagation of Leonardo failures back to the caller.
+ *
+ * **User Story:**
+ * - As a user submitting an image-generation request, I want the API route to reject bad input early
+ *   and preserve meaningful upstream errors so I know whether the request or the provider failed.
  */
 import { POST } from './route';
 import { generateLeonardoImage } from '@/features/core/api/client/leonardoClient';

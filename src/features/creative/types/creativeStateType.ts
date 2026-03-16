@@ -1,5 +1,11 @@
 /**
  * Defines the creative feature state that tracks every requested variant and aggregate completion metrics.
+ * The state stores the full creative job map alongside rollup counters so the app can render both
+ * detailed variant status and high-level progress for the creative generation stage.
+ *
+ * **User Story:**
+ * - As a user waiting for creatives to finish, I want the app to track every variant and overall
+ *   progress so I can see both per-output status and total completion at a glance.
  */
 import type { Creative } from './creativeType';
 

@@ -1,5 +1,11 @@
 /**
  * Selectors and view-model mappers that translate raw pipeline state into progress and results UI data.
+ * They turn low-level orchestration state into the labels, badges, timers, and metrics summaries
+ * that the progress and results screens need to present the workflow clearly.
+ *
+ * **User Story:**
+ * - As a user monitoring the pipeline, I want readable progress and results data so I can understand
+ *   the current stage, product status, elapsed time, and final business metrics without parsing raw state.
  */
 import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '@/app/store';

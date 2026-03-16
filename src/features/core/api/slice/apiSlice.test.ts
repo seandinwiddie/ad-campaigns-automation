@@ -1,5 +1,11 @@
 /**
  * Verifies the RTK Query wrapper around Leonardo and Dropbox HTTP requests.
+ * The test coverage explains how provider-specific HTTP success and failure responses are translated
+ * into the normalized data and error shapes consumed by the rest of the application.
+ *
+ * **User Story:**
+ * - As a user validating credentials or generating assets, I want backend API failures to be surfaced
+ *   consistently so the app can show clear feedback instead of ambiguous network errors.
  */
 import { configureStore } from '@reduxjs/toolkit';
 import { apiSlice } from './apiSlice';

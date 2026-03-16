@@ -1,5 +1,11 @@
 /**
  * Defines the compliance feature state for guideline inputs, detected issues, and per-product reports.
+ * It stores both the rules loaded from the brief and the outputs of automated checks, allowing
+ * the pipeline and results screens to reason about campaign-wide compliance from one source of truth.
+ *
+ * **User Story:**
+ * - As the app evaluates brand safety, I want the compliance state to keep guidelines, issues,
+ *   and product reports together so every part of the workflow can access the current audit results.
  */
 import type { ComplianceIssue } from './complianceIssueType';
 import type { ComplianceReport } from './complianceReportType';

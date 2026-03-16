@@ -1,5 +1,11 @@
 /**
  * Verifies the Leonardo validation route's input normalization and upstream error handling.
+ * The test cases spell out how the route should treat missing credentials, malformed JSON,
+ * successful provider responses, and provider-auth failures.
+ *
+ * **User Story:**
+ * - As a user validating my Leonardo API key, I want the backend route to normalize my input and
+ *   return clear validation results so I can trust whether setup is complete before running the pipeline.
  */
 import { POST } from './route';
 import { validateLeonardoApiKey } from '@/features/core/api/client/leonardoClient';

@@ -1,5 +1,11 @@
 /**
  * Verifies that the creative slice expands products into format variants and tracks completion progress.
+ * The scenarios explain how the feature fans one product out into multiple aspect-ratio jobs
+ * and how completion counts roll up into the progress numbers shown elsewhere in the app.
+ *
+ * **User Story:**
+ * - As a user generating campaign creatives, I want each product automatically expanded into all required
+ *   ad formats and tracked with accurate progress so I know how much of the creative stage is complete.
  */
 import { configureStore } from '@reduxjs/toolkit';
 import creativeReducer, {

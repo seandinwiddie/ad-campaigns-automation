@@ -1,5 +1,11 @@
 /**
  * Covers the asset slice flow so existing images, missing assets, and generated outputs stay in sync.
+ * Each scenario documents a distinct branch of the asset lifecycle: reusing a known image,
+ * flagging a product for generation, and storing a finished AI result back into state.
+ *
+ * **User Story:**
+ * - As a marketer preparing a campaign, I want each product to clearly show whether its source image
+ *   was found, still needs generation, or has already been created so the pipeline can proceed reliably.
  */
 import { configureStore } from '@reduxjs/toolkit';
 import assetsReducer from '../slice/assetsSlice';

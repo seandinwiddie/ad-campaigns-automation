@@ -1,5 +1,11 @@
 /**
  * Selectors for retrieving user settings and checking credential availability.
+ * They gather the raw provider credentials and derived readiness checks in one place so setup screens,
+ * listeners, and guards all agree on whether the app has enough configuration to proceed.
+ *
+ * **User Story:**
+ * - As the app decides whether setup is complete, I want shared selectors for saved credentials so
+ *   every screen and workflow uses the same rules for credential availability.
  */
 import type { RootState } from '@/app/store';
 

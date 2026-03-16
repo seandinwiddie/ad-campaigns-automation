@@ -1,5 +1,11 @@
 /**
  * Covers the settings slice contract for storing and clearing external provider credentials.
+ * These tests explain the reducer guarantees around credential persistence, availability checks,
+ * and the empty-state behavior used before the user has completed setup.
+ *
+ * **User Story:**
+ * - As a user connecting external services, I want saved credentials to appear in app state reliably
+ *   and disappear cleanly when cleared so setup behaves predictably.
  */
 import { configureStore } from '@reduxjs/toolkit';
 import settingsReducer from '../slice/settingsSlice';

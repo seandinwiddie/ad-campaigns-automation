@@ -1,5 +1,11 @@
 /**
  * Exercises brief parsing and validation across the supported JSON and YAML input paths.
+ * The scenarios document which payload shapes are accepted, which required fields are enforced,
+ * and how validation errors are surfaced when a campaign brief is incomplete.
+ *
+ * **User Story:**
+ * - As a marketer uploading a campaign brief, I want the app to accept valid JSON or YAML and tell me
+ *   exactly which fields are missing so I can fix my input before launching the pipeline.
  */
 import { configureStore } from '@reduxjs/toolkit';
 import briefReducer from '../slice/briefSlice';

@@ -1,5 +1,11 @@
 /**
  * Verifies that clearing the brief editor resets both the raw draft text and the parsed brief state.
+ * The test captures the coordinated behavior between the brief listener and the UI slice so
+ * the text editor and validated brief snapshot cannot drift apart after a reset action.
+ *
+ * **User Story:**
+ * - As a user starting over on my campaign brief, I want one clear action to wipe both the editor text
+ *   and the parsed brief results so I do not accidentally run the pipeline with stale data.
  */
 import { configureStore } from '@reduxjs/toolkit';
 import briefReducer from '@/features/brief/slice/briefSlice';

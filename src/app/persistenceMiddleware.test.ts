@@ -1,5 +1,11 @@
 /**
  * Covers startup hydration so saved credentials restore both persistent settings and screen-level input state.
+ * The assertions document the expected boot behavior when localStorage contains complete or partial
+ * credentials, making the startup contract explicit for future refactors.
+ *
+ * **User Story:**
+ * - As a returning user, I want previously saved credentials to repopulate the app correctly on load
+ *   so I can resume my workflow without re-entering tokens or landing on the wrong screen.
  */
 import { configureStore } from '@reduxjs/toolkit';
 import { initializeStore } from './persistenceMiddleware';

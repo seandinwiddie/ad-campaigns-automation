@@ -1,5 +1,11 @@
 /**
  * Selectors for retrieving asset state and calculating missing dependencies.
+ * They centralize how callers read raw asset records, unresolved product lists, and
+ * the aggregate "all assets ready" signal that gates later pipeline steps.
+ *
+ * **User Story:**
+ * - As a screen or listener consuming asset state, I want shared selectors for asset readiness so I can
+ *   render status and trigger follow-up work from one consistent interpretation of the store.
  */
 import type { RootState } from '@/app/store';
 

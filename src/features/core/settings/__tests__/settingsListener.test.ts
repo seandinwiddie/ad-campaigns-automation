@@ -1,5 +1,11 @@
 /**
  * Exercises the settings listener workflow that trims credentials, persists them, and stores validation results.
+ * The scenarios document the orchestration layer that converts temporary form input into saved settings,
+ * navigation changes, and validation feedback from external providers.
+ *
+ * **User Story:**
+ * - As a user configuring Leonardo and Dropbox access, I want the app to save cleaned credentials and
+ *   show validation results so I know setup is complete before I move into the campaign workflow.
  */
 import { configureStore } from '@reduxjs/toolkit';
 import { apiSlice } from '@/features/core/api/slice/apiSlice';

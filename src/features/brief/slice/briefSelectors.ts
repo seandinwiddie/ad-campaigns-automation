@@ -1,5 +1,11 @@
 /**
  * Selectors for accessing campaign brief data and validation status.
+ * They package both raw brief fields and derived values, such as product counts and button labels,
+ * so components can stay simple and reuse the same interpretation of brief readiness.
+ *
+ * **User Story:**
+ * - As a screen rendering brief status, I want shared selectors for parsed content and validation state
+ *   so the UI can show consistent messaging about whether the campaign is ready to run.
  */
 import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '@/app/store';

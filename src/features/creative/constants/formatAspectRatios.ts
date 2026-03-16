@@ -1,5 +1,11 @@
 /**
  * Central registry of the output formats the pipeline composes for each generated campaign asset.
+ * This constant is the single source of truth for which aspect ratios the system must render,
+ * which dimensions they require, and how those variants are labeled across the workflow.
+ *
+ * **User Story:**
+ * - As a campaign operator, I want every product rendered in the supported ad formats so the pipeline
+ *   consistently produces the size variants needed for downstream channels.
  */
 import type { FormatAspectRatio } from '../types/formatAspectRatioType';
 

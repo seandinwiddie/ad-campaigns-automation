@@ -1,5 +1,11 @@
 /**
  * Defines the canonical campaign brief payload consumed by the downstream pipeline stages.
+ * This interface describes the normalized shape that brief parsing must produce before any asset,
+ * creative, or compliance workflow can begin.
+ *
+ * **User Story:**
+ * - As a user planning a campaign, I want one structured brief format for products, audience, region,
+ *   message, and brand rules so the pipeline can turn my input into consistent campaign outputs.
  */
 import type { BrandGuidelines } from './brandGuidelinesType';
 import type { Product } from './productType';

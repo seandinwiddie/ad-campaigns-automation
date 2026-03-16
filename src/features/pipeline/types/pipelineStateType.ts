@@ -1,5 +1,11 @@
 /**
  * Defines the full pipeline state snapshot that powers progress screens, failure reporting, and final metrics.
+ * It combines lifecycle timing, product-level progress, aggregate metrics, and fatal or recoverable
+ * error information into the single state object that represents the entire automation run.
+ *
+ * **User Story:**
+ * - As a user following the pipeline from start to finish, I want the app to keep the full run state
+ *   in one place so progress, failures, and results all reflect the same source of truth.
  */
 import type { PipelineError } from './pipelineErrorType';
 import type { PipelineMetrics } from './pipelineMetricsType';

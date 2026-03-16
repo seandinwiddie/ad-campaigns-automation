@@ -1,6 +1,12 @@
 /**
  * Selectors for accessing and deriving global UI state, including validation 
  * statuses and input availability for various features.
+ * They gather the raw screen fields and the derived "can act now" checks that determine whether
+ * buttons should be enabled and whether the user has supplied enough input to continue.
+ *
+ * **User Story:**
+ * - As a user moving through the app, I want controls and status messages to react consistently to
+ *   my input so the UI clearly shows when I can validate credentials, load a brief, or continue.
  */
 import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '@/app/store';

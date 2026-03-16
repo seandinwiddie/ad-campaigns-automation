@@ -1,6 +1,12 @@
 /**
  * Selectors for tracking creative generation progress and mapping state 
  * to UI ViewModels for the gallery view.
+ * They expose both the raw creative records and the gallery-oriented projections that group
+ * variants by product and compute display-ready card data for results screens.
+ *
+ * **User Story:**
+ * - As a user reviewing generated assets, I want creative selectors to organize outputs by product
+ *   and format so the gallery can show progress and results in a way that is easy to scan.
  */
 import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '@/app/store';

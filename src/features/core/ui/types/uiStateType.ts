@@ -1,5 +1,11 @@
 /**
  * Defines the cross-screen UI state that drives navigation, credential forms, and progress messaging.
+ * It captures the transient information the app needs to preserve between views, including active page,
+ * draft inputs, validation statuses, and elapsed pipeline time.
+ *
+ * **User Story:**
+ * - As a user stepping through setup and campaign generation, I want the app to remember my current
+ *   screen, typed inputs, and validation feedback so progress is not lost while I work.
  */
 import type { AppPage } from './appPageType';
 

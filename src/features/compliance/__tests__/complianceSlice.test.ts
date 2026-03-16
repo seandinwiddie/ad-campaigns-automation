@@ -1,5 +1,11 @@
 /**
  * Covers the compliance rules that turn brand guidelines into campaign-level pass/fail signals.
+ * The test cases explain how configured brand colors and prohibited words are translated into
+ * concrete issue records and overall compliance decisions for generated campaign assets.
+ *
+ * **User Story:**
+ * - As a brand owner, I want generated creatives checked against my colors and banned words so I can
+ *   trust that campaign assets match guidelines before they are accepted as complete.
  */
 import { configureStore } from '@reduxjs/toolkit';
 import complianceReducer, {

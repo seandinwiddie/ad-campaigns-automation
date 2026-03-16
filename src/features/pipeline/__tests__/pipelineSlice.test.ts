@@ -1,5 +1,11 @@
 /**
  * Covers the pipeline slice state machine, per-product progress tracking, and summary metric calculation.
+ * The suite documents how the pipeline moves through its major stages, how product-level outcomes are
+ * recorded, and how end-of-run metrics are calculated from the completed work.
+ *
+ * **User Story:**
+ * - As a user running the campaign automation pipeline, I want the app to track stage transitions,
+ *   per-product outcomes, and final efficiency metrics so I can understand what happened during the run.
  */
 import { configureStore } from '@reduxjs/toolkit';
 import pipelineReducer, {

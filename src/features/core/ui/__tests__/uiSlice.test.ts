@@ -1,5 +1,11 @@
 /**
  * Covers the UI slice contract for navigation, draft inputs, and elapsed-time tracking.
+ * The test cases explain how the single-page application stores screen state, editor drafts,
+ * credential input values, and the timer that reflects pipeline progress.
+ *
+ * **User Story:**
+ * - As a user moving through setup, brief editing, and results, I want the UI state to preserve
+ *   my current screen and in-progress inputs so the app feels coherent across the workflow.
  */
 import { configureStore } from '@reduxjs/toolkit';
 import uiReducer from '../slice/uiSlice';
